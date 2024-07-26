@@ -1,4 +1,4 @@
-package raisetech.StudentManagement;
+package raisetech.studentmanagement;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -24,4 +24,8 @@ public class StudentService {
   public List<StudentCourse> searchStudentCourseList() {
     return repsitory.searchStudentCourse();
   }
+
+  public void registerStudent(Student student){
+    repsitory.insertStudent(student);
+  }
 }

@@ -51,9 +51,9 @@ public class StudentController {
     if (result.hasErrors()){
       return "registerStudent";
     }
-
     // 新規受講生情報を登録
+    service.registerStudent(studentDetail.getStudent());
     // コース情報を登録
-    return "redirect/studentList";
+    return "redirect:/studentList";
   }
 }

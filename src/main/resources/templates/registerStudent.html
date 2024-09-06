@@ -43,6 +43,24 @@
     <label for="remark">備考</label>
     <input type="text" id="remark" th:field="*{student.remark}" required/>
   </div>
+  <h2>コース登録</h2>
+  <div>
+    <label for="courseName">コース名</label>
+    <select id="courseName" th:field="*{studentCourses[0].courseName}" required>
+      <option value="java">Java</option>
+      <option value="aws">AWS</option>
+      <option value="デザイン">デザイン</option>
+      <option value="Webマーケティング">Webマーケティング</option>
+    </select>
+  </div>
+  <div>
+    <label for="startDate">開始日時</label>
+    <input type="datetime-local" id="startDate" th:field="*{studentCourses[0].startDate}" required/>
+  </div>
+  <div>
+    <label for="endDate">終了日時</label>
+    <input type="datetime-local" id="endDate" th:field="*{studentCourses[0].endDate}" required/>
+  </div>
   <div>
     <button type="submit">登録</button>
   </div>

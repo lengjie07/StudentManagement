@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>受講生登録</title>
+</head>
+<body>
+<h1>受講生登録</h1>
+<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="fullName">名前</label>
+    <input type="text" id="fullName" th:field="*{student.fullName}" required/>
+  </div>
+  <div>
+    <label for="furigana">フリガナ</label>
+    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+  </div>
+  <div>
+    <label for="nickname">ニックネーム</label>
+    <input type="text" id="nickname" th:field="*{student.nickname}" required/>
+  </div>
+  <div>
+    <label for="emailAddress">メールアドレス</label>
+    <input type="text" id="emailAddress" th:field="*{student.emailAddress}" required/>
+  </div>
+  <div>
+    <label for="area">地域</label>
+    <input type="text" id="area" th:field="*{student.area}" required/>
+  </div>
+  <div>
+    <label for="age">年齢</label>
+    <input type="number" id="age" th:field="*{student.age}" required/>
+  </div>
+  <div>
+    <label for="gender">性別</label>
+    <select id="gender" th:field="*{student.gender}" required>
+      <option value="男性">男性</option>
+      <option value="女性">女性</option>
+      <option value="その他">その他</option>
+    </select>
+  </div>
+  <div>
+    <label for="remark">備考</label>
+    <input type="text" id="remark" th:field="*{student.remark}" required/>
+  </div>
+  <h2>コース登録</h2>
+  <div>
+    <label for="courseName">コース名</label>
+    <select id="courseName" th:field="*{studentCourses[0].courseName}" required>
+      <option value="java">Java</option>
+      <option value="aws">AWS</option>
+      <option value="デザイン">デザイン</option>
+      <option value="Webマーケティング">Webマーケティング</option>
+    </select>
+  </div>
+  <div>
+    <label for="startDate">開始日時</label>
+    <input type="datetime-local" id="startDate" th:field="*{studentCourses[0].startDate}" required/>
+  </div>
+  <div>
+    <label for="endDate">終了日時</label>
+    <input type="datetime-local" id="endDate" th:field="*{studentCourses[0].endDate}" required/>
+  </div>
+  <div>
+    <button type="submit">登録</button>
+  </div>
+</form>
+</body>
+</html>

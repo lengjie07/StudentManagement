@@ -1,11 +1,13 @@
 package raisetech.studentmanagement.data;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class Student {
 
-  private String id;
+  private int id;
   private String fullName;
   private String furigana;
   private String nickname;

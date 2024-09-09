@@ -41,5 +41,13 @@ public class StudentService {
       repository.insertStudentCourse(studentCourse);
     }
   }
+
+  public Student findStudentById(int id){
+    return repository.findStudentById(id);
+  }
+
+  public List<StudentCourse> findStudentCoursesByStudentId(int studentId){
+    return repository.findStudentCoursesByStudentId(studentId);
+  }
 }
 

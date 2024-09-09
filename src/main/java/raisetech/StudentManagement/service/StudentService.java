@@ -49,5 +49,15 @@ public class StudentService {
   public List<StudentCourse> findStudentCoursesByStudentId(int studentId){
     return repository.findStudentCoursesByStudentId(studentId);
   }
-}
 
+  @Transactional
+  public void updateStudentWithCourses(StudentDetail studentDetail){
+    // 受講生情報を更新
+    repository.updateStudent(studentDetail.getStudent());
+
+    // コース情報を更新
+    for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
+      repository.updateStudentCourse(studentCourse);
+    }
+  }
+}

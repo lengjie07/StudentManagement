@@ -73,4 +73,13 @@ public class StudentController {
     model.addAttribute("studentDetail", studentDetail);
     return "updateStudent";
   }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result){
+    if (result.hasErrors()){
+      return "updateStudent";
+    }
+    service.updateStudentWithCourses(studentDetail);
+    return "redirect:/studentList";
+  }
 }

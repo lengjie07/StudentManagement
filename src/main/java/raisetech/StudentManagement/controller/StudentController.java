@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -58,5 +59,18 @@ public class StudentController {
     // 新規受講生情報とコース情報を登録
     service.registerStudentWithCourse(studentDetail);
     return "redirect:/studentList";
+  }
+
+  @GetMapping("/editStudent/{id}")
+  public String editStudent(@PathVariable int id, Model model){
+    Student student = service.findStudentById(id);
+    List<StudentCourse> studentCourses = service.findStudentCoursesByStudentId(id);
+
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentCourses(studentCourses);
+
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
   }
 }

@@ -1,5 +1,6 @@
 package raisetech.studentmanagement.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.data.Student;
@@ -43,7 +45,9 @@ public class StudentController {
 
   @GetMapping("/newStudent")
   public String newStudent(Model model){
-    model.addAttribute("studentDetail", new StudentDetail());
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudentCourses(Arrays.asList(new StudentCourse()));
+    model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
 
@@ -54,6 +58,28 @@ public class StudentController {
     }
     // 新規受講生情報とコース情報を登録
     service.registerStudentWithCourse(studentDetail);
+    return "redirect:/studentList";
+  }
+
+  @GetMapping("/editStudent/{id}")
+  public String editStudent(@PathVariable int id, Model model){
+    Student student = service.findStudentById(id);
+    List<StudentCourse> studentCourses = service.findStudentCoursesByStudentId(id);
+
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentCourses(studentCourses);
+
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
+  }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result){
+    if (result.hasErrors()){
+      return "updateStudent";
+    }
+    service.updateStudentWithCourses(studentDetail);
     return "redirect:/studentList";
   }
 }

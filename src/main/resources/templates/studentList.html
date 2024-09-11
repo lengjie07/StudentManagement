@@ -23,7 +23,10 @@
   <tbody>
   <tr th:each="studentDetail : ${studentList}">
     <td th:text="${studentDetail.student.id}"></td>
-    <td th:text="${studentDetail.student.fullName}"></td>
+    <td>
+      <a th:href="@{/editStudent/{id}(id=${studentDetail.student.id})}"
+         th:text="${studentDetail.student.fullName}"></a>
+    </td>
     <td th:text="${studentDetail.student.furigana}"></td>
     <td th:text="${studentDetail.student.nickname}"></td>
     <td th:text="${studentDetail.student.emailAddress}"></td>

@@ -19,7 +19,6 @@ public interface StudentRepository {
    * 受講生情報の全件検索
    * @return 受講生情報リスト
    */
-  @Select("SELECT * FROM students")
   List<Student> searchStudent();
 
   /**
@@ -47,6 +46,7 @@ public interface StudentRepository {
 
   /**
    * 新規受講生情報の登録
+   * IDは自動採番
    * 受講生情報を登録する際にコース情報も一緒に行う
    * @param student 受講生情報
    */
@@ -60,6 +60,7 @@ public interface StudentRepository {
 
   /**
    * 新規コース情報の登録
+   * IDは自動採番
    * コース情報の登録は受講生情報の登録と一緒に行う
    * @param studentCourse コース情報
    */

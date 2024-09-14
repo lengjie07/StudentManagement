@@ -3,9 +3,11 @@ package raisetech.studentmanagement.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
@@ -15,7 +17,7 @@ import raisetech.studentmanagement.service.StudentService;
 /**
  *  受講生の検索、登録、更新などを行うREST APIとして実行されるController
  */
-
+@Validated
 @RestController
 public class StudentController {
 
@@ -59,11 +61,12 @@ public class StudentController {
 
   /**
    * 受講生詳細の更新
+   * キャンセルフラグの更新も行う(論理削除)
    * 受講生情報とコース情報を遺書に更新する
    * @param studentDetail 受講生詳細
    * @return 更新が成功した旨をテキストで返す
    */
-  @PostMapping("/updateStudent")
+  @PutMapping("/updateStudent")
   public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail){
     service.updateStudentWithCourses(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");

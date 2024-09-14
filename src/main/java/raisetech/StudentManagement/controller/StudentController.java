@@ -53,7 +53,6 @@ public class StudentController {
    */
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
-    // 新規受講生情報とコース情報を登録
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }

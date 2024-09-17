@@ -52,6 +52,7 @@
 
   <!-- コース情報の更新 -->
   <update id="updateStudentCourse">
+    UPDATE students_courses
     <set>
       <if test="courseName != null"> course_name = #{courseName}, </if>
       <if test="startDate != null"> start_date = #{startDate}, </if>

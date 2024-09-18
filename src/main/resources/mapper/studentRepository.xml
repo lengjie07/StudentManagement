@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="raisetech.studentmanagement.repository.StudentRepository">
+  <!-- 受講生情報の全件検索 -->
+  <select id="searchStudent" resultType="raisetech.studentmanagement.data.Student">
+    SELECT * FROM students
+  </select>
+
+  <!-- IDで指定した受講生情報の検索 -->
+  <select id="findStudentById" parameterType="int" resultType="raisetech.studentmanagement.data.Student">
+    SELECT * FROM students WHERE id = #{id}
+  </select>
+
+  <!-- コース情報の全件検索 -->
+  <select id="searchStudentCourse" resultType="raisetech.studentmanagement.data.StudentCourse">
+    SELECT * FROM students_courses
+  </select>
+
+  <!-- 受講生IDで指定した受講生のコース情報 -->
+  <select id="findStudentCoursesByStudentId" parameterType="int" resultType="raisetech.studentmanagement.data.StudentCourse">
+    SELECT * FROM students_courses WHERE student_id = #{studentId}
+  </select>
+
+  <!-- 新規受講生情報の登録 -->
+  <insert id="insertStudent" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO students (full_name, furigana, nickname, email_address, area, age, gender, remark, is_deleted)
+    VALUES (#{fullName}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{gender}, #{remark}, false)
+  </insert>
+
+  <!-- 新規コース情報の登録 -->
+  <insert id="insertStudentCourse" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO students_courses (student_id, course_name, start_date, end_date)
+    VALUES (#{studentId}, #{courseName}, #{startDate}, #{endDate})
+  </insert>
+
+  <!-- 受講生情報の更新 -->
+  <update id="updateStudent">
+    UPDATE students
+    SET full_name = #{fullName},
+    furigana = #{furigana},
+    nickname = #{nickname},
+    email_address = #{emailAddress},
+    area = #{area},
+    age = #{age},
+    gender = #{gender},
+    remark = #{remark},
+    is_deleted = #{isDeleted}
+    WHERE id = #{id}
+  </update>
+
+  <!-- コース情報の更新 -->
+  <update id="updateStudentCourse">
+    UPDATE students_courses
+    <set>
+      <if test="courseName != null"> course_name = #{courseName}, </if>
+      <if test="startDate != null"> start_date = #{startDate}, </if>
+      <if test="endDate != null"> end_date = #{endDate}, </if>
+    </set>
+    WHERE id = #{id} AND student_id = #{studentId}
+  </update>
+</mapper>

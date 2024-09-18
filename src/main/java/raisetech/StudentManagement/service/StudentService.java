@@ -55,17 +55,31 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail registerStudentWithCourse(StudentDetail studentDetail) {
+    Student student = studentDetail.getStudent();
+
     // 受講生を登録
-    repository.insertStudent(studentDetail.getStudent());
+    repository.insertStudent(student);
 
     // コース情報を登録
-    for (StudentCourse studentCourse : studentDetail.getStudentCourses()) {
-      studentCourse.setStudentId(studentDetail.getStudent().getId()); // 登録した受講生のIDをセット
-      studentCourse.setStartDate(LocalDateTime.now()); // 開始日を設定
-      studentCourse.setEndDate(LocalDateTime.now().plusYears(1)); // 終了日を開始日の1年後に設定
+    studentDetail.getStudentCourses().forEach(studentCourse -> {
+      initStudentCourse(studentCourse, student);
       repository.insertStudentCourse(studentCourse);
-    }
+    });
     return studentDetail;
+  }
+
+  /**
+   * 受講生情報を登録する際の初期情報
+   * 受講生ID、開始日、終了日
+   * @param studentCourse コース情報
+   * @param student 受講生情報
+   */
+  private  void initStudentCourse(StudentCourse studentCourse, Student student) {
+    LocalDateTime now = LocalDateTime.now();
+
+    studentCourse.setStudentId(student.getId()); // 登録した受講生のIDをセット
+    studentCourse.setStartDate(now); // 開始日を設定
+    studentCourse.setEndDate(now.plusYears(1)); // 終了日を開始日の1年後に設定
   }
 
   /**
@@ -79,8 +93,7 @@ public class StudentService {
     repository.updateStudent(studentDetail.getStudent());
 
     // コース情報を更新
-    for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
-      repository.updateStudentCourse(studentCourse);
-    }
+    studentDetail.getStudentCourses()
+        .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
   }
 }

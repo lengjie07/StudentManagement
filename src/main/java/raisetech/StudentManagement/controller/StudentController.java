@@ -1,5 +1,7 @@
 package raisetech.studentmanagement.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +45,8 @@ public class StudentController {
    * @return 受講生詳細
    */
   @GetMapping("/student/{id}")
-  public StudentDetail getStudent(@PathVariable int id) {
+  public StudentDetail getStudent(
+      @PathVariable @NotNull int id) {
     return service.searchStudent(id);
   }
 
@@ -54,7 +57,7 @@ public class StudentController {
    * @return 登録した受講生詳細
    */
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail){
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }
@@ -67,7 +70,7 @@ public class StudentController {
    * @return 更新が成功した旨をテキストで返す
    */
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail){
+  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail){
     service.updateStudentWithCourses(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }

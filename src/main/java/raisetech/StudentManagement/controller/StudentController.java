@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
 
 /**
@@ -47,6 +48,10 @@ public class StudentController {
   @GetMapping("/student/{id}")
   public StudentDetail getStudent(
       @PathVariable @NotNull int id) {
+    StudentDetail studentDetail = service.searchStudent(id);
+    if (studentDetail.getStudent() == null){
+      throw new StudentNotFoundException(id);
+    }
     return service.searchStudent(id);
   }
 

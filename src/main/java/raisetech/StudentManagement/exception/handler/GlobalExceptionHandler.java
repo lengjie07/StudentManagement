@@ -16,11 +16,13 @@ public class GlobalExceptionHandler {
   /**
    * ControllerのgetStudentメソッドで存在しないIDがリクエストされた際の例外をハンドリングする
    * @param ex StudentNotFoundException
-   * @return 受講生ID: "+ id + "が見つかりません。
+   * @return "error": "受講生ID: idが見つかりません。"
    */
   @ExceptionHandler(StudentNotFoundException.class)
-  public ResponseEntity<String> handleStudentNotFoundException(StudentNotFoundException ex){
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  public ResponseEntity<Map<String, String>> handleStudentNotFoundException(StudentNotFoundException ex) {
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("error", ex.getMessage());
+    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
   }
 
   /**

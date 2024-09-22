@@ -1,9 +1,11 @@
 package raisetech.studentmanagement.data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
+@Schema(description = "コース情報")
 @Getter
 @Setter
 public class StudentCourse {

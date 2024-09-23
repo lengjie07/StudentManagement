@@ -60,7 +60,7 @@ public class StudentController {
       @ApiResponse(responseCode = "200", description = "成功"),
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
-  @GetMapping("/student/{id}")
+  @GetMapping("/students/{id}")
   public StudentDetail getStudent(@PathVariable @NotNull int id) {
     // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
     StudentDetail studentDetail = service.searchStudent(id);

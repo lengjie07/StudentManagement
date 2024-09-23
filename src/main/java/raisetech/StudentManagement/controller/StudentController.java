@@ -1,9 +1,5 @@
 package raisetech.studentmanagement.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -22,9 +18,8 @@ import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
 
 /**
- * 受講生の検索、登録、更新などを行うREST APIとして実行されるController
+ *  受講生の検索、登録、更新などを行うREST APIとして実行されるController
  */
-@Tag(name = "Student Management API", description = "受講生の検索、登録、更新などを行うAPI")
 @Validated
 @RestController
 public class StudentController {
@@ -40,11 +35,6 @@ public class StudentController {
    * 受講生詳細の全件検索
    * @return 受講生詳細リスト
    */
-  @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "成功"),
-      @ApiResponse(responseCode = "500", description = "内部サーバーエラー")
-  })
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
@@ -55,19 +45,14 @@ public class StudentController {
    * @param id 受講生ID
    * @return 受講生詳細
    */
-  @Operation(summary = "受講生詳細検索", description = "指定したIDの受講生詳細を検索します。")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "成功"),
-      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
-  })
   @GetMapping("/student/{id}")
-  public StudentDetail getStudent(@PathVariable @NotNull int id) {
-    // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
+  public StudentDetail getStudent(
+      @PathVariable @NotNull int id) {
     StudentDetail studentDetail = service.searchStudent(id);
-    if (studentDetail.getStudent() == null) {
-      throw new StudentNotFoundException(id); // 明示的に例外をスロー
+    if (studentDetail.getStudent() == null){
+      throw new StudentNotFoundException(id);
     }
-    return studentDetail;
+    return service.searchStudent(id);
   }
 
   /**
@@ -76,13 +61,8 @@ public class StudentController {
    * @param studentDetail 受講生詳細
    * @return 登録した受講生詳細
    */
-  @Operation(summary = "受講生登録", description = "受講生とコースを登録します。")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "登録成功"),
-      @ApiResponse(responseCode = "400", description = "不正なリクエスト")
-  })
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail){
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }
@@ -90,18 +70,12 @@ public class StudentController {
   /**
    * 受講生詳細の更新
    * キャンセルフラグの更新も行う(論理削除)
-   * 受講生情報とコース情報を一緒に更新する
+   * 受講生情報とコース情報を遺書に更新する
    * @param studentDetail 受講生詳細
    * @return 更新が成功した旨をテキストで返す
    */
-  @Operation(summary = "受講生更新", description = "受講生情報とコース情報を更新します。")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "更新成功"),
-      @ApiResponse(responseCode = "400", description = "不正なリクエスト"),
-      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
-  })
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail){
     service.updateStudentWithCourses(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }

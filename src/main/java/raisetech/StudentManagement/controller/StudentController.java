@@ -65,7 +65,7 @@ public class StudentController {
     // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
     StudentDetail studentDetail = service.searchStudent(id);
     if (studentDetail.getStudent() == null) {
-      throw new StudentNotFoundException(id); // 明示的に例外をスロー
+      throw new StudentNotFoundException(id);
     }
     return studentDetail;
   }
@@ -101,8 +101,13 @@ public class StudentController {
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+    // Student IDの存在チェック
+    StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());
+    if (studentDetail1.getStudent() == null) {
+      throw new StudentNotFoundException(studentDetail.getStudent().getId());
+    }
     service.updateStudentWithCourses(studentDetail);
-    return ResponseEntity.ok("更新処理が成功しました。");
+    return ResponseEntity.ok(studentDetail);
   }
 }

@@ -45,7 +45,7 @@ public class StudentController {
       @ApiResponse(responseCode = "200", description = "成功"),
       @ApiResponse(responseCode = "500", description = "内部サーバーエラー")
   })
-  @GetMapping("/studentList")
+  @GetMapping("/students")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
   }
@@ -81,7 +81,7 @@ public class StudentController {
       @ApiResponse(responseCode = "200", description = "登録成功"),
       @ApiResponse(responseCode = "400", description = "不正なリクエスト")
   })
-  @PostMapping("/registerStudent")
+  @PostMapping("/POST/students")
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail) {
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);
@@ -100,7 +100,7 @@ public class StudentController {
       @ApiResponse(responseCode = "400", description = "不正なリクエスト"),
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
-  @PutMapping("/updateStudent")
+  @PutMapping("/PUT/students")
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
     // Student IDの存在チェック
     StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());

@@ -87,4 +87,18 @@ class StudentServiceTest {
     verify(repository, times(1)).insertStudent(student);
     verify(repository, times(1)).insertStudentCourse(studentCourse);
   }
+
+  @Test
+  void 受講生詳細の更新でリポジトリの処理が適切に呼び出せていること() {
+    Student student = new Student();
+    StudentCourse studentCourse = new StudentCourse();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    studentCourseList.add(studentCourse);
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+
+    sut.updateStudentWithCourses(studentDetail);
+
+    verify(repository, times(1)).updateStudent(student);
+    verify(repository, times(1)).updateStudentCourse(studentCourse);
+  }
 }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,5 +53,24 @@ class StudentServiceTest {
 
     // 後処理
     // 例) DBを元に戻す
+  }
+
+  @Test
+  void IDで指定した受講生詳細の検索でリポジトリの処理が適切に呼び出せていること() {
+    int id = 0;
+    Student student = new Student();
+    student.setId(id);
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+
+    when(repository.findStudentById(id)).thenReturn(student);
+    when(repository.findStudentCoursesByStudentId(id)).thenReturn(studentCourseList);
+
+    StudentDetail expected = new StudentDetail(student, studentCourseList);
+
+    StudentDetail actual = sut.searchStudent(id);
+
+    verify(repository, times(1)).findStudentById(id);
+    verify(repository, times(1)).findStudentCoursesByStudentId(id);
+    Assertions.assertEquals(expected.getStudent().getId(), actual.getStudent().getId());
   }
 }

@@ -44,7 +44,7 @@ class StudentServiceTest {
 
 
     // 実行
-    List<StudentDetail> actual = sut.searchStudentList(); // actual：実行結果
+    sut.searchStudentList();
 
     // 検証
     verify(repository, times(1)).searchStudent();
@@ -65,12 +65,26 @@ class StudentServiceTest {
     when(repository.findStudentById(id)).thenReturn(student);
     when(repository.findStudentCoursesByStudentId(id)).thenReturn(studentCourseList);
 
-    StudentDetail expected = new StudentDetail(student, studentCourseList);
+    StudentDetail expected = new StudentDetail(student, studentCourseList); // expected：期待値
 
-    StudentDetail actual = sut.searchStudent(id);
+    StudentDetail actual = sut.searchStudent(id);// actual：実行結果
 
     verify(repository, times(1)).findStudentById(id);
     verify(repository, times(1)).findStudentCoursesByStudentId(id);
     Assertions.assertEquals(expected.getStudent().getId(), actual.getStudent().getId());
+  }
+
+  @Test
+  void 新規受講生の登録でリポジトリの処理が適切に呼び出せていること() {
+    Student student = new Student();
+    StudentCourse studentCourse = new StudentCourse();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+    studentCourseList.add(studentCourse);
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+
+    sut.registerStudentWithCourse(studentDetail);
+
+    verify(repository, times(1)).insertStudent(student);
+    verify(repository, times(1)).insertStudentCourse(studentCourse);
   }
 }

@@ -74,7 +74,7 @@ public class StudentService {
    * @param studentCourse コース情報
    * @param student 受講生情報
    */
-  private  void initStudentCourse(StudentCourse studentCourse, Student student) {
+  private void initStudentCourse(StudentCourse studentCourse, Student student) {
     LocalDateTime now = LocalDateTime.now();
 
     studentCourse.setStudentId(student.getId()); // 登録した受講生のIDをセット

@@ -29,6 +29,8 @@ class StudentServiceTest {
 
   private StudentService sut; // sut：テスト対象
 
+  private final int id = 12345;
+
   @BeforeEach
   void before() {
     sut = new StudentService(repository, converter);
@@ -57,9 +59,7 @@ class StudentServiceTest {
 
   @Test
   void IDで指定した受講生詳細の検索でリポジトリの処理が適切に呼び出せていること() {
-    int id = 12345;
-    Student student = new Student();
-    student.setId(id);
+    Student student = new Student(id);
     List<StudentCourse> studentCourseList = new ArrayList<>();
 
     when(repository.findStudentById(id)).thenReturn(student);
@@ -76,7 +76,7 @@ class StudentServiceTest {
 
   @Test
   void 新規受講生の登録でリポジトリの処理が適切に呼び出せていること() {
-    Student student = new Student();
+    Student student = new Student(id);
     StudentCourse studentCourse = new StudentCourse();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     studentCourseList.add(studentCourse);
@@ -90,7 +90,7 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の更新でリポジトリの処理が適切に呼び出せていること() {
-    Student student = new Student();
+    Student student = new Student(id);
     StudentCourse studentCourse = new StudentCourse();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     studentCourseList.add(studentCourse);

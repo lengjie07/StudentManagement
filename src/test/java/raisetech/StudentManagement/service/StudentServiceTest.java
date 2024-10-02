@@ -57,7 +57,7 @@ class StudentServiceTest {
 
   @Test
   void IDで指定した受講生詳細の検索でリポジトリの処理が適切に呼び出せていること() {
-    int id = 0;
+    int id = 12345;
     Student student = new Student();
     student.setId(id);
     List<StudentCourse> studentCourseList = new ArrayList<>();

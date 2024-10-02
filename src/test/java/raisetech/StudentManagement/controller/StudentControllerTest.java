@@ -10,12 +10,14 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.studentmanagement.data.Student;
+import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -37,6 +39,39 @@ class StudentControllerTest {
         .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudentList();
+  }
+
+  @Test
+  void 存在するIDで指定した受講生詳細の検索で正常に返されること() throws Exception {
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
+    StudentDetail studentDetail =new StudentDetail(student, null);
+
+    Mockito.when(service.searchStudent(id)).thenReturn(studentDetail);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/students/{id}", id))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 存在しないIDで指定した受講生詳細の検索で404が返されること() throws Exception {
+    Mockito.when(service.searchStudent(id)).thenReturn(null);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/students/{id}", id))
+        .andExpect(status().isNotFound());
+
+    verify(service, times(1)).searchStudent(id);
   }
 
   @Test

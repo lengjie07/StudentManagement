@@ -63,7 +63,7 @@ public class StudentController {
   public StudentDetail getStudent(@PathVariable @NotNull int id) {
     // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
     StudentDetail studentDetail = service.searchStudent(id);
-    if (studentDetail.getStudent() == null) {
+    if (studentDetail == null || studentDetail.getStudent() == null) {
       throw new StudentNotFoundException(id); // 明示的に例外をスロー
     }
     return studentDetail;

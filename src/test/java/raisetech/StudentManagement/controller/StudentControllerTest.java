@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,6 +131,58 @@ class StudentControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(service, times(0)).registerStudentWithCourse(any());
+  }
+
+  @Test
+  void 受講生詳細の更新で正常に更新されること() throws Exception{
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
+    List<StudentCourse> studentCourse = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+
+    when(service.searchStudent(id)).thenReturn(studentDetail);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentDetail)))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).updateStudentWithCourses(any());
+  }
+
+  @Test
+  void 受講生詳細の更新で存在しないIDの場合404エラーが返されること() throws Exception {
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
+    StudentDetail studentDetail = new StudentDetail(student, null);
+
+    when(service.searchStudent(id)).thenReturn(null);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentDetail)))
+        .andExpect(status().isNotFound());
+
+    verify(service, times(1)).searchStudent(id);
+    verify(service, times(0)).updateStudentWithCourses(any());
   }
 
   @Test

@@ -101,9 +101,12 @@ public class StudentController {
   })
   @PutMapping("/students")
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
-    // Student IDの存在チェック
+    if (studentDetail == null || studentDetail.getStudent() == null) {
+      return ResponseEntity.badRequest().build(); // 400 Bad Requestを返す
+    }
+
     StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());
-    if (studentDetail1.getStudent() == null) {
+    if (studentDetail1 == null || studentDetail1.getStudent() == null) {
       throw new StudentNotFoundException(studentDetail.getStudent().getId());
     }
     service.updateStudentWithCourses(studentDetail);

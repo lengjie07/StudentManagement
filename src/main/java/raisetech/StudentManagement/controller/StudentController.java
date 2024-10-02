@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
@@ -32,7 +31,7 @@ public class StudentController {
   private StudentService service;
 
   @Autowired
-  public StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
   }
 

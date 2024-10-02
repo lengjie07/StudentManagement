@@ -1,22 +1,28 @@
 package raisetech.studentmanagement.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.studentmanagement.data.Student;
+import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -25,6 +31,9 @@ class StudentControllerTest {
 
   @Autowired
   MockMvc mockMvc;
+
+  @Autowired
+  ObjectMapper objectMapper;
 
   @MockBean
   private StudentService service;
@@ -54,7 +63,8 @@ class StudentControllerTest {
         "性別",
         "備考",
         false);
-    StudentDetail studentDetail =new StudentDetail(student, null);
+    List<StudentCourse> studentCourse = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
 
     Mockito.when(service.searchStudent(id)).thenReturn(studentDetail);
 
@@ -72,6 +82,54 @@ class StudentControllerTest {
         .andExpect(status().isNotFound());
 
     verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 新規受講生の登録で正常に登録されること() throws Exception {
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
+    List<StudentCourse> studentCourse = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentDetail)))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).registerStudentWithCourse(any());
+  }
+
+  @Test
+  void 新規受講生の登録でバリデーションエラーが発生した場合400エラーが返されること() throws Exception {
+    Student student = new Student(
+        id,
+        null, // 氏名　NotBlank
+        null, // フリガナ　NotBlank
+        null, // ニックネーム
+        null, // メールアドレス　NotBlank
+        null, // 地域
+        null, // 年齢　NotBlank
+        null, // 性別
+        null, // 備考
+        false);
+    List<StudentCourse> studentCourse = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(studentDetail)))
+        .andExpect(status().isBadRequest());
+
+    verify(service, times(0)).registerStudentWithCourse(any());
   }
 
   @Test

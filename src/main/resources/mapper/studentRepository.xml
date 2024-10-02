@@ -54,7 +54,7 @@
   <update id="updateStudentCourse">
     UPDATE students_courses
     <set>
-      <if test="courseName != null"> course_name = #{courseName}, </if>
+      course_name = #{courseName},
       <if test="startDate != null"> start_date = #{startDate}, </if>
       <if test="endDate != null"> end_date = #{endDate}, </if>
     </set>

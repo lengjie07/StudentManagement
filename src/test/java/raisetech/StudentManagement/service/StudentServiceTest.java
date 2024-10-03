@@ -59,7 +59,17 @@ class StudentServiceTest {
 
   @Test
   void IDで指定した受講生詳細の検索でリポジトリの処理が適切に呼び出せていること() {
-    Student student = new Student(id);
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
     List<StudentCourse> studentCourseList = new ArrayList<>();
 
     when(repository.findStudentById(id)).thenReturn(student);
@@ -76,7 +86,17 @@ class StudentServiceTest {
 
   @Test
   void 新規受講生の登録でリポジトリの処理が適切に呼び出せていること() {
-    Student student = new Student(id);
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
     StudentCourse studentCourse = new StudentCourse();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     studentCourseList.add(studentCourse);
@@ -90,7 +110,17 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の更新でリポジトリの処理が適切に呼び出せていること() {
-    Student student = new Student(id);
+    Student student = new Student(
+        id,
+        "氏名",
+        "フリガナ",
+        "ニックネーム",
+        "test@example.com",
+        "地域",
+        99,
+        "性別",
+        "備考",
+        false);
     StudentCourse studentCourse = new StudentCourse();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     studentCourseList.add(studentCourse);

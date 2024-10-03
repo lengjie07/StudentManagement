@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.studentmanagement.controller.converter.StudentConverter;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
@@ -32,7 +31,7 @@ public class StudentController {
   private StudentService service;
 
   @Autowired
-  public StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
   }
 
@@ -64,7 +63,7 @@ public class StudentController {
   public StudentDetail getStudent(@PathVariable @NotNull int id) {
     // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
     StudentDetail studentDetail = service.searchStudent(id);
-    if (studentDetail.getStudent() == null) {
+    if (studentDetail == null || studentDetail.getStudent() == null) {
       throw new StudentNotFoundException(id); // 明示的に例外をスロー
     }
     return studentDetail;
@@ -102,9 +101,12 @@ public class StudentController {
   })
   @PutMapping("/students")
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
-    // Student IDの存在チェック
+    if (studentDetail == null || studentDetail.getStudent() == null) {
+      return ResponseEntity.badRequest().build(); // 400 Bad Requestを返す
+    }
+
     StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());
-    if (studentDetail1.getStudent() == null) {
+    if (studentDetail1 == null || studentDetail1.getStudent() == null) {
       throw new StudentNotFoundException(studentDetail.getStudent().getId());
     }
     service.updateStudentWithCourses(studentDetail);

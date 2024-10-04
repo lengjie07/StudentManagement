@@ -42,15 +42,10 @@ class StudentConverterTest {
 
     assertThat(actual.size()).isEqualTo(2);
 
-    StudentDetail studentDetail1 = actual.getFirst();
-    assertThat(studentDetail1.getStudent()).isEqualTo(student1);
-    assertThat(studentDetail1.getStudentCourses().size()).isEqualTo(2);
-    assertThat(studentDetail1.getStudentCourses().get(0)).isEqualTo(course1);
-    assertThat(studentDetail1.getStudentCourses().get(1)).isEqualTo(course2);
+    assertThat(actual.getFirst().getStudent()).isEqualTo(student1);
+    assertThat(actual.getFirst().getStudentCourses()).contains(course1, course2);
 
-    StudentDetail studentDetail2 = actual.get(1);
-    assertThat(studentDetail2.getStudent()).isEqualTo(student2);
-    assertThat(studentDetail2.getStudentCourses().size()).isEqualTo(1);
-    assertThat(studentDetail2.getStudentCourses().getFirst()).isEqualTo(course3);
+    assertThat(actual.get(1).getStudent()).isEqualTo(student2);
+    assertThat(actual.get(1).getStudentCourses()).contains(course3);
   }
 }

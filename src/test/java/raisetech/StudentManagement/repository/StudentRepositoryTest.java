@@ -74,34 +74,31 @@ class StudentRepositoryTest {
 
   @Test
   void 新規受講生情報の登録が行えること() {
-    Student student = new Student();
-    student.setFullName("桐ヶ谷直葉");
-    student.setFurigana("キリガヤスグハ");
-    student.setNickname("リーファ");
-    student.setEmailAddress("leafa@sao.com");
-    student.setArea("埼玉");
-    student.setAge(16);
-    student.setGender("女性");
+    Student student = new Student(6, "桐ヶ谷直葉", "キリガヤスグハ", "リーファ", "leafa@sao.com",
+        "埼玉", 16, "女性", "", false);
 
     sut.insertStudent(student);
 
     List<Student> actual = sut.searchStudent();
 
     assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).extracting("fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "結城明日奈", "綾野珪子", "篠崎里香",
+            "壺井遼太郎", "桐ヶ谷直葉");
   }
 
   @Test
   void 新規コース情報の登録が行えること() {
-    StudentCourse studentCourse = new StudentCourse();
-    studentCourse.setStudentId(1);
-    studentCourse.setCourseName("java");
-    studentCourse.setStartDate(LocalDateTime.now());
-    studentCourse.setEndDate(LocalDateTime.now().plusYears(1));
+    StudentCourse studentCourse = new StudentCourse(7, 1, "デザイン", LocalDateTime.now(),
+        LocalDateTime.now().plusYears(1));
 
     sut.insertStudentCourse(studentCourse);
 
     List<StudentCourse> actual = sut.searchStudentCourse();
     assertThat(actual.size()).isEqualTo(7);
+    assertThat(actual).extracting("courseName")
+        .containsExactlyInAnyOrder("java", "aws", "デザイン", "java", "aws", "webマーケティング",
+            "デザイン");
   }
 
   @Test

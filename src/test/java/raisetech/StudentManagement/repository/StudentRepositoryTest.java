@@ -40,6 +40,9 @@ class StudentRepositoryTest {
     List<Student> actual = sut.searchStudent();
 
     assertThat(actual.size()).isEqualTo(5);
+    assertThat(actual).extracting("fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "結城明日奈", "綾野珪子", "篠崎里香",
+            "壺井遼太郎");
   }
 
   @Test
@@ -47,18 +50,20 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchStudentCourse();
 
     assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).extracting("courseName")
+        .containsExactlyInAnyOrder("java", "aws", "デザイン", "java", "aws", "webマーケティング");
   }
 
   @Test
-  void IDで指定した受講生情報の検索が行えること(){
+  void IDで指定した受講生情報の検索が行えること() {
     int id = 1;
     Student actual = sut.findStudentById(id);
 
-    assertThat(actual.getId()).isEqualTo(1);
+    assertThat(actual.getFullName()).isEqualTo("桐ヶ谷和人");
   }
 
   @Test
-  void 受講生IDで指定した受講生のコース情報検索が行えること(){
+  void 受講生IDで指定した受講生のコース情報検索が行えること() {
     int id = 1;
     List<StudentCourse> actual = sut.findStudentCoursesByStudentId(id);
 
@@ -86,7 +91,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 新規コース情報の登録が行えること(){
+  void 新規コース情報の登録が行えること() {
     StudentCourse studentCourse = new StudentCourse();
     studentCourse.setStudentId(1);
     studentCourse.setCourseName("java");
@@ -100,7 +105,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生情報の更新が行えること(){
+  void 受講生情報の更新が行えること() {
     Student student = sut.findStudentById(1);
     student.setNickname("黒の剣士"); // 元のニックネームは"キリト"
 
@@ -111,7 +116,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void コース情報の更新が行えること(){
+  void コース情報の更新が行えること() {
     StudentCourse studentCourse = sut.findStudentCoursesByStudentId(1).getFirst();
     studentCourse.setCourseName("デザイン"); // 元のコース名は"java"
 

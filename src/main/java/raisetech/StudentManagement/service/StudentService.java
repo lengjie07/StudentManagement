@@ -1,13 +1,16 @@
 package raisetech.studentmanagement.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentmanagement.controller.converter.StudentConverter;
+import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.repository.StudentRepository;
 
@@ -19,6 +22,7 @@ public class StudentService {
 
   private StudentRepository repository;
   private StudentConverter converter;
+
   @Autowired
   public StudentService(StudentRepository repsitory, StudentConverter converter) {
     this.repository = repsitory;
@@ -26,14 +30,15 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の全件検索
-   * 取得した受講生情報リストとコース情報リストをConverterで組み合わせて受講生詳細リストを返す
+   * 受講生詳細の全件検索 取得した受講生情報リストとコース情報リストをConverterで組み合わせて受講生詳細リストを返す
+   *
    * @return 受講生詳細リスト
    */
   public List<StudentDetail> searchStudentList() {
     List<Student> students = repository.searchStudent();
-    List<StudentCourse>  studentCourses= repository.searchStudentCourse();
-    return converter.convertStudentDetails(students, studentCourses);
+    List<StudentCourse> studentCourses = repository.searchStudentCourse();
+    List<CourseApplicationStatus> courseApplicationStatuses = repository.searchCourseApplicationStatus();
+    return converter.convertStudentDetails(students, studentCourses, courseApplicationStatuses);
   }
 
   /**
@@ -44,7 +49,24 @@ public class StudentService {
   public StudentDetail searchStudent(int id) {
     Student student = repository.findStudentById(id);
     List<StudentCourse> studentCourses = repository.findStudentCoursesByStudentId(id);
-    return new StudentDetail(student, studentCourses);
+    List<CourseApplicationStatus> courseApplicationStatuses = new ArrayList<>();
+    for (StudentCourse studentCourse : studentCourses) {
+      CourseApplicationStatus status = repository.findCourseApplicationStatusByCourseId(
+          studentCourse.getId());
+      if (status != null) {
+        courseApplicationStatuses.add(status);
+      }
+    }
+    List<StudentCourseDetail> studentCourseDetails = new ArrayList<>();
+    for (StudentCourse studentCourse : studentCourses) {
+      CourseApplicationStatus courseApplicationStatus = repository.findCourseApplicationStatusByCourseId(
+          studentCourse.getId());
+      StudentCourseDetail studentCourseDetail = new StudentCourseDetail();
+      studentCourseDetail.setStudentCourse(studentCourse);
+      studentCourseDetail.setCourseApplicationStatus(courseApplicationStatus);
+      studentCourseDetails.add(studentCourseDetail);
+    }
+    return new StudentDetail(student, studentCourseDetails);
   }
 
   /**
@@ -61,9 +83,17 @@ public class StudentService {
     repository.insertStudent(student);
 
     // コース情報を登録
-    studentDetail.getStudentCourses().forEach(studentCourse -> {
+    studentDetail.getStudentCourseDetails().forEach(studentCourseDetail -> {
+      StudentCourse studentCourse = studentCourseDetail.getStudentCourse();
       initStudentCourse(studentCourse, student);
       repository.insertStudentCourse(studentCourse);
+
+      // 申し込み状況を登録
+      CourseApplicationStatus courseApplicationStatus = studentCourseDetail.getCourseApplicationStatus();
+      if (courseApplicationStatus != null) {
+        courseApplicationStatus.setCourseId(studentCourse.getId());
+        repository.insertCourseApplicationStatus(courseApplicationStatus);
+      }
     });
     return studentDetail;
   }
@@ -72,7 +102,7 @@ public class StudentService {
    * 受講生情報を登録する際の初期情報
    * 受講生ID、開始日、終了日
    * @param studentCourse コース情報
-   * @param student 受講生情報
+   * @param student       受講生情報
    */
   private void initStudentCourse(StudentCourse studentCourse, Student student) {
     LocalDateTime now = LocalDateTime.now();
@@ -88,12 +118,21 @@ public class StudentService {
    * @param studentDetail 受講生詳細
    */
   @Transactional
-  public void updateStudentWithCourses(StudentDetail studentDetail){
+  public void updateStudentWithCourses(StudentDetail studentDetail) {
     // 受講生情報を更新
     repository.updateStudent(studentDetail.getStudent());
 
     // コース情報を更新
-    studentDetail.getStudentCourses()
-        .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
+    studentDetail.getStudentCourseDetails()
+        .forEach(studentCourseDetail -> {
+          repository.updateStudentCourse(
+              studentCourseDetail.getStudentCourse());
+
+          // 申し込み状況を更新
+          CourseApplicationStatus courseApplicationStatus = studentCourseDetail.getCourseApplicationStatus();
+          if (courseApplicationStatus != null) {
+            repository.updateCourseApplicationStatus(courseApplicationStatus);
+          }
+        });
   }
 }

@@ -70,9 +70,11 @@
   <update id="updateStudentCourse">
     UPDATE students_courses
     <set>
-      course_name = #{courseName},
-      <if test="startDate != null"> start_date = #{startDate}, </if>
-      <if test="endDate != null"> end_date = #{endDate}, </if>
+      <trim suffixOverrides=",">
+        course_name = #{courseName},
+        <if test="startDate != null"> start_date = #{startDate}, </if>
+        <if test="endDate != null"> end_date = #{endDate}, </if>
+      </trim>
     </set>
     WHERE id = #{id} AND student_id = #{studentId}
   </update>
@@ -80,6 +82,7 @@
   <!-- 申し込み状況の更新 -->
   <update id="updateCourseApplicationStatus">
     UPDATE course_application_statuses
-    SET status = #{status},
+    SET status = #{status}
+    WHERE course_id = #{courseId}
   </update>
 </mapper>

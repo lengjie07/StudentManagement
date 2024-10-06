@@ -46,10 +46,11 @@ public interface StudentRepository {
 
   /**
    * コースIDで指定したコースの申し込み状況
+   *
    * @param courseId コースID
-   * @return コースIDで指定したコースの申し込み状況リスト
+   * @return コースIDで指定したコースの申し込み状況
    */
-  List<CourseApplicationStatus> findCourseApplicationStatusByCourseId(int courseId);
+  CourseApplicationStatus findCourseApplicationStatusByCourseId(int courseId);
 
   /**
    * 新規受講生情報の登録

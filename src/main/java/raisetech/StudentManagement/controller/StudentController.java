@@ -37,6 +37,7 @@ public class StudentController {
 
   /**
    * 受講生詳細の全件検索
+   *
    * @return 受講生詳細リスト
    */
   @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
@@ -51,6 +52,7 @@ public class StudentController {
 
   /**
    * IDで指定した受講生詳細の検索
+   *
    * @param id 受講生ID
    * @return 受講生詳細
    */
@@ -71,7 +73,8 @@ public class StudentController {
 
   /**
    * 新規受講生の登録
-   * コース情報も一緒に登録する
+   * コース情報と申し込み状況も一緒に登録する
+   *
    * @param studentDetail 受講生詳細
    * @return 登録した受講生詳細
    */
@@ -89,7 +92,8 @@ public class StudentController {
   /**
    * 受講生詳細の更新
    * キャンセルフラグの更新も行う(論理削除)
-   * 受講生情報とコース情報を一緒に更新する
+   * 受講生情報とコース情報、申し込み状況を一緒に更新する
+   *
    * @param studentDetail 受講生詳細
    * @return 更新が成功した旨をテキストで返す
    */

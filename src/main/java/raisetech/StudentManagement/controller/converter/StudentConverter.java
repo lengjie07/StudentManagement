@@ -43,6 +43,12 @@ public class StudentConverter {
     return studentDetails;
   }
 
+  /**
+   * 申し込み状況をコースIDでマッピングする
+   *
+   * @param courseApplicationStatuses 申し込み状況リスト
+   * @return コースIDと申し込み状況のマップ
+   */
   private static Map<Integer, CourseApplicationStatus> mapCourseApplicationStatuses(
       List<CourseApplicationStatus> courseApplicationStatuses) {
     Map<Integer, CourseApplicationStatus> statusMap = new HashMap<>();
@@ -51,6 +57,15 @@ public class StudentConverter {
     }
     return statusMap;
   }
+
+  /**
+   * 受講生詳細の作成
+   *
+   * @param studentCourses コース情報
+   * @param student 受講生情報
+   * @param statusMap コースIDと申し込み状況のマップ
+   * @param studentDetails 受講生詳細リスト
+   */
 
   private static void createStudentDetail(List<StudentCourse> studentCourses, Student student,
       Map<Integer, CourseApplicationStatus> statusMap, List<StudentDetail> studentDetails) {

@@ -43,6 +43,7 @@ public class StudentService {
 
   /**
    * IDで指定した受講生詳細の検索
+   *
    * @param id 受講生ID
    * @return IDで指定した受講生詳細
    */
@@ -71,7 +72,8 @@ public class StudentService {
 
   /**
    * 新規受講生の登録
-   * コース情報も一緒に登録する
+   * コース情報と申し込み状況も一緒に登録する
+   *
    * @param studentDetail 受講生詳細
    * @return 登録した受講生詳細
    */
@@ -101,6 +103,7 @@ public class StudentService {
   /**
    * 受講生情報を登録する際の初期情報
    * 受講生ID、開始日、終了日
+   *
    * @param studentCourse コース情報
    * @param student       受講生情報
    */
@@ -114,7 +117,8 @@ public class StudentService {
 
   /**
    * 受講生詳細の更新
-   * 受講生情報とコース情報の更新を一緒に行う
+   * 受講生情報とコース情報、申し込み状況の更新を一緒に行う
+   *
    * @param studentDetail 受講生詳細
    */
   @Transactional

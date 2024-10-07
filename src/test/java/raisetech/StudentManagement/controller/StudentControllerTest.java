@@ -23,7 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.studentmanagement.data.Student;
-import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -64,8 +64,8 @@ class StudentControllerTest {
         "性別",
         "備考",
         false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseDetailList);
 
     Mockito.when(service.searchStudent(id)).thenReturn(studentDetail);
 
@@ -98,8 +98,8 @@ class StudentControllerTest {
         "性別",
         "備考",
         false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseDetailList);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
             .contentType(MediaType.APPLICATION_JSON)
@@ -122,8 +122,8 @@ class StudentControllerTest {
         null, // 性別
         null, // 備考
         false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseDetailList);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
             .contentType(MediaType.APPLICATION_JSON)
@@ -146,8 +146,8 @@ class StudentControllerTest {
         "性別",
         "備考",
         false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseDetailList);
 
     when(service.searchStudent(id)).thenReturn(studentDetail);
 

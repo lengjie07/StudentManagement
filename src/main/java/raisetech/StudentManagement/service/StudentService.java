@@ -50,14 +50,6 @@ public class StudentService {
   public StudentDetail searchStudent(int id) {
     Student student = repository.findStudentById(id);
     List<StudentCourse> studentCourses = repository.findStudentCoursesByStudentId(id);
-    List<CourseApplicationStatus> courseApplicationStatuses = new ArrayList<>();
-    for (StudentCourse studentCourse : studentCourses) {
-      CourseApplicationStatus status = repository.findCourseApplicationStatusByCourseId(
-          studentCourse.getId());
-      if (status != null) {
-        courseApplicationStatuses.add(status);
-      }
-    }
     List<StudentCourseDetail> studentCourseDetails = new ArrayList<>();
     for (StudentCourse studentCourse : studentCourses) {
       CourseApplicationStatus courseApplicationStatus = repository.findCourseApplicationStatusByCourseId(

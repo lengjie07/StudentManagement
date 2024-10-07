@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
 
 class StudentConverterTest {
@@ -30,22 +32,33 @@ class StudentConverterTest {
 
     StudentCourse course1 = new StudentCourse(1, 1, "コース名", LocalDateTime.now(),
         LocalDateTime.now().plusYears(1));
-    StudentCourse course2 = new StudentCourse(3, 1, "コース名", LocalDateTime.now(),
+    StudentCourse course2 = new StudentCourse(2, 1, "コース名", LocalDateTime.now(),
         LocalDateTime.now().plusYears(1));
     StudentCourse course3 = new StudentCourse(3, 2, "コース名", LocalDateTime.now(),
         LocalDateTime.now().plusYears(1));
 
+    CourseApplicationStatus status1 = new CourseApplicationStatus(1, 1, "仮申込");
+    CourseApplicationStatus status2 = new CourseApplicationStatus(2, 2, "本申込");
+    CourseApplicationStatus status3 = new CourseApplicationStatus(3, 3, "受講中");
+
     List<Student> studentList = Arrays.asList(student1, student2);
     List<StudentCourse> studentCourseList = Arrays.asList(course1, course2, course3);
+    List<CourseApplicationStatus> courseApplicationStatusList = Arrays.asList(status1, status2,
+        status3);
 
-    List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
+    List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList,
+        courseApplicationStatusList);
 
     assertThat(actual.size()).isEqualTo(2);
 
     assertThat(actual.getFirst().getStudent()).isEqualTo(student1);
-    assertThat(actual.getFirst().getStudentCourses()).contains(course1, course2);
+    List<StudentCourseDetail> studentCourseDetails1 = actual.getFirst().getStudentCourseDetails();
+    assertThat(studentCourseDetails1).extracting(StudentCourseDetail::getStudentCourse).contains(course1, course2);
+    assertThat(studentCourseDetails1).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status1,status2);
 
     assertThat(actual.get(1).getStudent()).isEqualTo(student2);
-    assertThat(actual.get(1).getStudentCourses()).contains(course3);
+    List<StudentCourseDetail> studentCourseDetails2 = actual.get(1).getStudentCourseDetails();
+    assertThat(studentCourseDetails2).extracting(StudentCourseDetail::getStudentCourse).contains(course3);
+    assertThat(studentCourseDetails2).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status3);
   }
 }

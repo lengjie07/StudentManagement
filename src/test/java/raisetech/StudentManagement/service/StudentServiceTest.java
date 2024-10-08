@@ -32,7 +32,7 @@ class StudentServiceTest {
   @Mock
   private StudentConverter converter;
 
-  private StudentService sut; // sut：テスト対象
+  private StudentService sut;
 
   private final int studentId = 12345;
 
@@ -43,7 +43,6 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の全件検索でリポジトリとコンバータの処理が適切に呼び出せていること() {
-    // 事前準備
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     List<CourseApplicationStatus> courseApplicationStatusList = new ArrayList<>();
@@ -51,10 +50,8 @@ class StudentServiceTest {
     when(repository.searchStudentCourse()).thenReturn(studentCourseList);
     when(repository.searchCourseApplicationStatus()).thenReturn(courseApplicationStatusList);
 
-    // 実行
     sut.searchStudentList();
 
-    // 検証
     verify(repository, times(1)).searchStudent();
     verify(repository, times(1)).searchStudentCourse();
     verify(repository, times(1)).searchCourseApplicationStatus();
@@ -76,22 +73,23 @@ class StudentServiceTest {
     StudentDetail expected = createStudentDetail(student, studentCourseList,
         courseApplicationStatus);
 
-    StudentDetail actual = sut.searchStudent(studentId);// actual：実行結果
+    StudentDetail actual = sut.searchStudent(studentId);
 
     verify(repository, times(1)).findStudentById(studentId);
     verify(repository, times(1)).findStudentCoursesByStudentId(studentId);
-    verify(repository, times(1)).findCourseApplicationStatusByCourseId(studentCourseList.getFirst().getId());
+    verify(repository, times(1)).findCourseApplicationStatusByCourseId(
+        studentCourseList.getFirst().getId());
 
     assertThat(actual.getStudent().getId()).isEqualTo(expected.getStudent().getId());
-    assertThat(actual.getStudentCourseDetails().size()).isEqualTo(
-        expected.getStudentCourseDetails().size());
-    assertThat(actual.getStudentCourseDetails().getFirst().getStudentCourse().getId())
+    assertThat(actual.getStudentCourseDetailList().size()).isEqualTo(
+        expected.getStudentCourseDetailList().size());
+    assertThat(actual.getStudentCourseDetailList().getFirst().getStudentCourse().getId())
         .isEqualTo(
-            expected.getStudentCourseDetails().getFirst().getStudentCourse().getId());
+            expected.getStudentCourseDetailList().getFirst().getStudentCourse().getId());
     assertThat(
-        actual.getStudentCourseDetails().getFirst().getCourseApplicationStatus().getId())
+        actual.getStudentCourseDetailList().getFirst().getCourseApplicationStatus().getId())
         .isEqualTo(
-            expected.getStudentCourseDetails().getFirst().getCourseApplicationStatus().getId());
+            expected.getStudentCourseDetailList().getFirst().getCourseApplicationStatus().getId());
   }
 
   @Test
@@ -124,20 +122,17 @@ class StudentServiceTest {
     verify(repository, times(1)).updateCourseApplicationStatus(courseApplicationStatus);
   }
 
+  /**
+   * @return テスト用の受講生情報
+   */
   private Student createStudent() {
-    return new Student(
-        studentId,
-        "三宅崚介",
-        "ミヤケリョウスケ",
-        "Leng",
-        "leng@example.com",
-        "神奈川",
-        26,
-        "男性",
-        "備考",
-        false);
+    return new Student(studentId, "三宅崚介", "ミヤケリョウスケ", "Leng", "leng@example.com",
+        "神奈川", 26, "男性", "備考", false);
   }
 
+  /**
+   * @return テスト用のコース情報
+   */
   private List<StudentCourse> createStudentCourseList() {
     List<StudentCourse> studentCourseList = new ArrayList<>();
     StudentCourse studentCourse = new StudentCourse(1, studentId, "java", LocalDateTime.now(),
@@ -146,10 +141,19 @@ class StudentServiceTest {
     return studentCourseList;
   }
 
+  /**
+   * @return テスト用の申し込み状況
+   */
   private static CourseApplicationStatus createCourseApplicationStatus() {
     return new CourseApplicationStatus(1, 1, "受講中");
   }
 
+  /**
+   * @param student テスト用の受講生情報
+   * @param studentCourseList テスト用のコース情報
+   * @param courseApplicationStatus テスト用の申し込み状況
+   * @return テスト用の受講生詳細
+   */
   private static StudentDetail createStudentDetail(Student student,
       List<StudentCourse> studentCourseList,
       CourseApplicationStatus courseApplicationStatus) {

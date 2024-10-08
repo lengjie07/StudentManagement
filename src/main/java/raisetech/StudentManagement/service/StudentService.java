@@ -30,15 +30,18 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の全件検索 取得した受講生情報リストとコース情報リストをConverterで組み合わせて受講生詳細リストを返す
+   * 受講生詳細の全件検索
+   * 取得した受講生情報リストとコース情報リストを
+   * Converterで組み合わせて受講生詳細リストを返す
    *
    * @return 受講生詳細リスト
    */
   public List<StudentDetail> searchStudentList() {
-    List<Student> students = repository.searchStudent();
-    List<StudentCourse> studentCourses = repository.searchStudentCourse();
-    List<CourseApplicationStatus> courseApplicationStatuses = repository.searchCourseApplicationStatus();
-    return converter.convertStudentDetails(students, studentCourses, courseApplicationStatuses);
+    List<Student> studentList = repository.searchStudent();
+    List<StudentCourse> studentCourseList = repository.searchStudentCourse();
+    List<CourseApplicationStatus> courseApplicationStatusList = repository.searchCourseApplicationStatus();
+    return converter.convertStudentDetails(studentList, studentCourseList,
+        courseApplicationStatusList);
   }
 
   /**
@@ -48,9 +51,14 @@ public class StudentService {
    * @return IDで指定した受講生詳細
    */
   public StudentDetail searchStudent(int id) {
+    // 受講生IDで受講生を検索
     Student student = repository.findStudentById(id);
+
+    // 該当する受講生のコース情報を検索
     List<StudentCourse> studentCourses = repository.findStudentCoursesByStudentId(id);
     List<StudentCourseDetail> studentCourseDetails = new ArrayList<>();
+
+    // 各コース情報に対して申し込み状況を取得し、コース詳細を作成
     for (StudentCourse studentCourse : studentCourses) {
       CourseApplicationStatus courseApplicationStatus = repository.findCourseApplicationStatusByCourseId(
           studentCourse.getId());
@@ -77,7 +85,7 @@ public class StudentService {
     repository.insertStudent(student);
 
     // コース情報を登録
-    studentDetail.getStudentCourseDetails().forEach(studentCourseDetail -> {
+    studentDetail.getStudentCourseDetailList().forEach(studentCourseDetail -> {
       StudentCourse studentCourse = studentCourseDetail.getStudentCourse();
       initStudentCourse(studentCourse, student);
       repository.insertStudentCourse(studentCourse);
@@ -108,8 +116,7 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の更新
-   * 受講生情報とコース情報、申し込み状況の更新を一緒に行う
+   * 受講生詳細の更新 受講生情報とコース情報、申し込み状況の更新を一緒に行う
    *
    * @param studentDetail 受講生詳細
    */
@@ -119,7 +126,7 @@ public class StudentService {
     repository.updateStudent(studentDetail.getStudent());
 
     // コース情報を更新
-    studentDetail.getStudentCourseDetails()
+    studentDetail.getStudentCourseDetailList()
         .forEach(studentCourseDetail -> {
           repository.updateStudentCourse(
               studentCourseDetail.getStudentCourse());

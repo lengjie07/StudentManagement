@@ -63,10 +63,9 @@ public class StudentController {
   })
   @GetMapping("/students/{id}")
   public StudentDetail getStudent(@PathVariable @NotNull int id) {
-    // StudentDetailのnullチェックを行い、存在しない場合に例外をスローする
     StudentDetail studentDetail = service.searchStudent(id);
     if (studentDetail == null || studentDetail.getStudent() == null) {
-      throw new StudentNotFoundException(id); // 明示的に例外をスロー
+      throw new StudentNotFoundException(id);
     }
     return studentDetail;
   }
@@ -84,18 +83,19 @@ public class StudentController {
       @ApiResponse(responseCode = "400", description = "不正なリクエスト")
   })
   @PostMapping("/students")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> registerStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }
 
   /**
    * 受講生詳細の更新
-   * キャンセルフラグの更新も行う(論理削除)
+   * キャンセルフラグを更新して論理削除を行う
    * 受講生情報とコース情報、申し込み状況を一緒に更新する
    *
    * @param studentDetail 受講生詳細
-   * @return 更新が成功した旨をテキストで返す
+   * @return 更新後の受講生詳細
    */
   @Operation(summary = "受講生更新", description = "受講生情報とコース情報を更新します。")
   @ApiResponses(value = {
@@ -104,15 +104,17 @@ public class StudentController {
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
   @PutMapping("/students")
-  public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> updateStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     if (studentDetail == null || studentDetail.getStudent() == null) {
-      return ResponseEntity.badRequest().build(); // 400 Bad Requestを返す
+      return ResponseEntity.badRequest().build();
     }
 
     StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());
     if (studentDetail1 == null || studentDetail1.getStudent() == null) {
       throw new StudentNotFoundException(studentDetail.getStudent().getId());
     }
+
     service.updateStudentWithCourses(studentDetail);
     return ResponseEntity.ok(studentDetail);
   }

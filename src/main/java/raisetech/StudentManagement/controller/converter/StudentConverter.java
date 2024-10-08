@@ -94,7 +94,7 @@ public class StudentConverter {
       }
     }
     // 受講生詳細にコース詳細を設定
-    studentDetail.setStudentCourseDetails(studentCourseDetailList);
+    studentDetail.setStudentCourseDetailList(studentCourseDetailList);
     // 受講生詳細リストに追加
     studentDetailList.add(studentDetail);
   }

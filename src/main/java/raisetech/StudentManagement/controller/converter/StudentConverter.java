@@ -13,79 +13,89 @@ import raisetech.studentmanagement.domain.StudentDetail;
 
 /**
  * 受講生とコース情報を組み合わせて受講生詳細に変換するConverter
+ * 受講生情報、コース情報、申し込み状況を結び付けて、受講生詳細を生成する
  */
 @Component
 public class StudentConverter {
 
   /**
-   * コース情報に紐づく申し込み状況をマッピングしてコース詳細を作成する
-   * 受講生に紐づくコース詳細をマッピングして受講生詳細リストを作成する
+   * 受講生情報リスト、コース情報リスト、申し込み状況リストを元に、
+   * 受講生詳細情報のリストを生成する
    * 1つのコース情報に対して1つの申し込み状況が存在する
    * 1人の受講生に対して複数のコース詳細が存在する可能性がある
    *
-   * @param students 受講生情報
-   * @param studentCourses コース情報
-   * @param courseApplicationStatuses 申し込み状況
+   * @param studentList 受講生情報リスト
+   * @param studentCourseList コース情報リスト
+   * @param courseApplicationStatusList 申し込み状況リスト
    * @return 受講生詳細リスト
    */
-  public List<StudentDetail> convertStudentDetails(List<Student> students,
-      List<StudentCourse> studentCourses, List<CourseApplicationStatus> courseApplicationStatuses) {
+  public List<StudentDetail> convertStudentDetails(List<Student> studentList,
+      List<StudentCourse> studentCourseList,
+      List<CourseApplicationStatus> courseApplicationStatusList) {
 
-    // CourseApplicationStatusをCourseIdでマッピング
+    // 申し込み状況リストをコースIDをキーとするマップに変換
     Map<Integer, CourseApplicationStatus> statusMap = mapCourseApplicationStatuses(
-        courseApplicationStatuses);
+        courseApplicationStatusList);
 
-    // StudentIdごとにコース情報と申し込み状況を組み合わせる
-    List<StudentDetail> studentDetails = new ArrayList<>();
-    for (Student student : students) {
-      createStudentDetail(studentCourses, student, statusMap, studentDetails);
+    // 受講生ごとにコース情報と申し込み状況を組み合わせて、受講生詳細を作成
+    List<StudentDetail> studentDetailList = new ArrayList<>();
+    for (Student student : studentList) {
+      createStudentDetail(student, studentCourseList, statusMap, studentDetailList);
     }
-    return studentDetails;
+    return studentDetailList;
   }
 
   /**
-   * 申し込み状況をコースIDでマッピングする
+   * 申し込み状況リストをコースIDをキーとするマップに変換
+   * コースIDによる申し込み状況の検索を高速化するため
    *
-   * @param courseApplicationStatuses 申し込み状況リスト
-   * @return コースIDと申し込み状況のマップ
+   * @param courseApplicationStatusList 申し込み状況リスト
+   * @return コースIDをキー、申し込み状況を値とするマップ
    */
   private static Map<Integer, CourseApplicationStatus> mapCourseApplicationStatuses(
-      List<CourseApplicationStatus> courseApplicationStatuses) {
+      List<CourseApplicationStatus> courseApplicationStatusList) {
     Map<Integer, CourseApplicationStatus> statusMap = new HashMap<>();
-    for (CourseApplicationStatus status : courseApplicationStatuses) {
+    for (CourseApplicationStatus status : courseApplicationStatusList) {
       statusMap.put(status.getCourseId(), status);
     }
     return statusMap;
   }
 
   /**
-   * 受講生詳細の作成
+   * 受講生詳細を作成し、コース情報と申し込み状況を追加する
+   * 受講生に紐づいたコース情報と申し込み状況を設定して、受講生詳細リストに追加する
    *
-   * @param studentCourses コース情報
    * @param student 受講生情報
-   * @param statusMap コースIDと申し込み状況のマップ
-   * @param studentDetails 受講生詳細リスト
+   * @param studentCourseList コース情報リスト
+   * @param statusMap コースIDをキー、申し込み状況を値とするマップ
+   * @param studentDetailList 受講生詳細リスト
    */
-
-  private static void createStudentDetail(List<StudentCourse> studentCourses, Student student,
-      Map<Integer, CourseApplicationStatus> statusMap, List<StudentDetail> studentDetails) {
+  private static void createStudentDetail(Student student, List<StudentCourse> studentCourseList,
+      Map<Integer, CourseApplicationStatus> statusMap, List<StudentDetail> studentDetailList) {
+    // 受講生詳細オブジェクトを作成し、受講生情報を設定
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);
 
-    // 受講生に紐づくコース情報をリスト化
-    List<StudentCourseDetail> studentCourseDetails = new ArrayList<>();
-    for (StudentCourse studentCourse : studentCourses) {
+    // 受講生に紐づくコース詳細情報をリスト化
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    for (StudentCourse studentCourse : studentCourseList) {
+      // 受講生に紐づくコース情報をフィルタリング
       if (student.getId() == studentCourse.getStudentId()) {
+        // コースIDから申し込み状況を取得
         CourseApplicationStatus courseApplicationStatus = statusMap.get(studentCourse.getId());
 
+        // コース詳細オブジェクトを作成し、コース情報と申し込み状況を設定
         StudentCourseDetail studentCourseDetail = new StudentCourseDetail();
         studentCourseDetail.setStudentCourse(studentCourse);
         studentCourseDetail.setCourseApplicationStatus(courseApplicationStatus);
 
-        studentCourseDetails.add(studentCourseDetail);
+        // コース詳細リストに追加
+        studentCourseDetailList.add(studentCourseDetail);
       }
     }
-    studentDetail.setStudentCourseDetails(studentCourseDetails);
-    studentDetails.add(studentDetail);
+    // 受講生詳細にコース詳細を設定
+    studentDetail.setStudentCourseDetails(studentCourseDetailList);
+    // 受講生詳細リストに追加
+    studentDetailList.add(studentDetail);
   }
 }

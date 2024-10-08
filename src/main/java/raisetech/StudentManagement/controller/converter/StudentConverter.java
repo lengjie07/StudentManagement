@@ -29,7 +29,7 @@ public class StudentConverter {
    * @param courseApplicationStatusList 申し込み状況リスト
    * @return 受講生詳細リスト
    */
-  public List<StudentDetail> convertStudentDetails(List<Student> studentList,
+  public List<StudentDetail> convertStudentDetailList(List<Student> studentList,
       List<StudentCourse> studentCourseList,
       List<CourseApplicationStatus> courseApplicationStatusList) {
 

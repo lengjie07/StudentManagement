@@ -40,7 +40,7 @@ public class StudentService {
     List<Student> studentList = repository.searchStudent();
     List<StudentCourse> studentCourseList = repository.searchStudentCourse();
     List<CourseApplicationStatus> courseApplicationStatusList = repository.searchCourseApplicationStatus();
-    return converter.convertStudentDetails(studentList, studentCourseList,
+    return converter.convertStudentDetailList(studentList, studentCourseList,
         courseApplicationStatusList);
   }
 
@@ -56,7 +56,7 @@ public class StudentService {
 
     // 該当する受講生のコース情報を検索
     List<StudentCourse> studentCourses = repository.findStudentCoursesByStudentId(id);
-    List<StudentCourseDetail> studentCourseDetails = new ArrayList<>();
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
 
     // 各コース情報に対して申し込み状況を取得し、コース詳細を作成
     for (StudentCourse studentCourse : studentCourses) {
@@ -65,9 +65,9 @@ public class StudentService {
       StudentCourseDetail studentCourseDetail = new StudentCourseDetail();
       studentCourseDetail.setStudentCourse(studentCourse);
       studentCourseDetail.setCourseApplicationStatus(courseApplicationStatus);
-      studentCourseDetails.add(studentCourseDetail);
+      studentCourseDetailList.add(studentCourseDetail);
     }
-    return new StudentDetail(student, studentCourseDetails);
+    return new StudentDetail(student, studentCourseDetailList);
   }
 
   /**

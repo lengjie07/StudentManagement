@@ -51,7 +51,7 @@ class StudentConverterTest {
         status3);
 
     // 各リストを受講生詳細リストに変換
-    List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList,
+    List<StudentDetail> actual = sut.convertStudentDetailList(studentList, studentCourseList,
         courseApplicationStatusList);
 
     // 受講生詳細リストのサイズを検証
@@ -59,14 +59,14 @@ class StudentConverterTest {
 
     // 1人目の受講生詳細の中身を検証
     assertThat(actual.getFirst().getStudent()).isEqualTo(student1);
-    List<StudentCourseDetail> studentCourseDetails1 = actual.getFirst().getStudentCourseDetailList();
-    assertThat(studentCourseDetails1).extracting(StudentCourseDetail::getStudentCourse).contains(course1, course2);
-    assertThat(studentCourseDetails1).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status1,status2);
+    List<StudentCourseDetail> studentCourseDetailList1 = actual.getFirst().getStudentCourseDetailList();
+    assertThat(studentCourseDetailList1).extracting(StudentCourseDetail::getStudentCourse).contains(course1, course2);
+    assertThat(studentCourseDetailList1).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status1,status2);
 
     // 2人目の受講生詳細の中身を検証
     assertThat(actual.get(1).getStudent()).isEqualTo(student2);
-    List<StudentCourseDetail> studentCourseDetails2 = actual.get(1).getStudentCourseDetailList();
-    assertThat(studentCourseDetails2).extracting(StudentCourseDetail::getStudentCourse).contains(course3);
-    assertThat(studentCourseDetails2).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status3);
+    List<StudentCourseDetail> studentCourseDetailList2 = actual.get(1).getStudentCourseDetailList();
+    assertThat(studentCourseDetailList2).extracting(StudentCourseDetail::getStudentCourse).contains(course3);
+    assertThat(studentCourseDetailList2).extracting(StudentCourseDetail::getCourseApplicationStatus).contains(status3);
   }
 }

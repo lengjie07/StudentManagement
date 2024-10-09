@@ -144,7 +144,7 @@ class StudentServiceTest {
   /**
    * @return テスト用の申し込み状況
    */
-  private static CourseApplicationStatus createCourseApplicationStatus() {
+  private CourseApplicationStatus createCourseApplicationStatus() {
     return new CourseApplicationStatus(1, 1, "受講中");
   }
 
@@ -154,7 +154,7 @@ class StudentServiceTest {
    * @param courseApplicationStatus テスト用の申し込み状況
    * @return テスト用の受講生詳細
    */
-  private static StudentDetail createStudentDetail(Student student,
+  private StudentDetail createStudentDetail(Student student,
       List<StudentCourse> studentCourseList,
       CourseApplicationStatus courseApplicationStatus) {
     List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();

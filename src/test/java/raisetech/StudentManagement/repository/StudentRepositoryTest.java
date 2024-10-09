@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 
@@ -35,6 +36,16 @@ class StudentRepositoryTest {
    * (5, 'webマーケティング', '2024-12-01 00:00:00', '2025-12-01 00:00:00');
    */
 
+  /*
+   *初期のcourse_application_statusesテーブル
+   * (1, '本申込'),
+   * (2, '仮申込'),
+   * (3, '受講中'),
+   * (4, '受講中'),
+   * (5, '受講終了'),
+   * (6, '仮申込');
+   */
+
   @Test
   void 受講生情報の全件検索が行えること() {
     List<Student> actual = sut.searchStudent();
@@ -55,6 +66,15 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コース申し込み状況の全件検索が行えること() {
+    List<CourseApplicationStatus> actual = sut.searchCourseApplicationStatus();
+
+    assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).extracting("status")
+        .containsExactlyInAnyOrder("本申込", "仮申込", "受講中", "受講中", "受講終了", "仮申込");
+  }
+
+  @Test
   void IDで指定した受講生情報の検索が行えること() {
     int id = 1;
     Student actual = sut.findStudentById(id);
@@ -70,6 +90,14 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(2);
     assertThat(actual.getFirst().getStudentId()).isEqualTo(id);
     assertThat(actual.get(1).getStudentId()).isEqualTo(id);
+  }
+
+  @Test
+  void コースIDで指定したコースの申し込み状況の検索が行えること() {
+    int id = 1;
+    CourseApplicationStatus actual = sut.findCourseApplicationStatusByCourseId(id);
+
+    assertThat(actual.getStatus()).isEqualTo("本申込");
   }
 
   @Test
@@ -102,6 +130,18 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 新規申し込み状況の登録が行えること() {
+    CourseApplicationStatus courseApplicationStatus = new CourseApplicationStatus(7, 7, "仮申込");
+
+    sut.insertCourseApplicationStatus(courseApplicationStatus);
+
+    List<CourseApplicationStatus> actual = sut.searchCourseApplicationStatus();
+    assertThat(actual.size()).isEqualTo(7);
+    assertThat(actual).extracting("status")
+        .containsExactlyInAnyOrder("本申込","仮申込","受講中","受講中","受講終了","仮申込","仮申込");
+  }
+
+  @Test
   void 受講生情報の更新が行えること() {
     Student student = sut.findStudentById(1);
     student.setNickname("黒の剣士"); // 元のニックネームは"キリト"
@@ -121,5 +161,16 @@ class StudentRepositoryTest {
 
     StudentCourse actual = sut.findStudentCoursesByStudentId(1).getFirst();
     assertThat(actual.getCourseName()).isEqualTo("デザイン");
+  }
+
+  @Test
+  void 申し込み状況の更新が行えること() {
+    CourseApplicationStatus courseApplicationStatus = sut.findCourseApplicationStatusByCourseId(2);
+    courseApplicationStatus.setStatus("本申込"); // 元のステータスは"仮申込"
+
+    sut.updateCourseApplicationStatus(courseApplicationStatus);
+
+    CourseApplicationStatus actual = sut.findCourseApplicationStatusByCourseId(2);
+    assertThat(actual.getStatus()).isEqualTo("本申込");
   }
 }

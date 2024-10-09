@@ -23,7 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.studentmanagement.data.Student;
-import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -43,6 +43,18 @@ class StudentControllerTest {
 
   private final int id = 12345;
 
+  /**
+   * 受講生詳細データの準備
+   * 受講生情報は入力チェックにかからない
+   * コース詳細情報は空
+   */
+  private StudentDetail createValidStudentDetail() {
+    Student student = new Student(id, "氏名", "フリガナ", "ニックネーム", "test@example.com",
+        "地域", 99, "性別", "備考", false);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    return new StudentDetail(student, studentCourseDetailList);
+  }
+
   @Test
   void 受講生詳細の全件検索を実行して空のリストが返ってくること() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/students"))
@@ -53,19 +65,7 @@ class StudentControllerTest {
 
   @Test
   void 存在するIDで指定した受講生詳細の検索で正常に返されること() throws Exception {
-    Student student = new Student(
-        id,
-        "氏名",
-        "フリガナ",
-        "ニックネーム",
-        "test@example.com",
-        "地域",
-        99,
-        "性別",
-        "備考",
-        false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    StudentDetail studentDetail = createValidStudentDetail();
 
     Mockito.when(service.searchStudent(id)).thenReturn(studentDetail);
 
@@ -87,19 +87,7 @@ class StudentControllerTest {
 
   @Test
   void 新規受講生の登録で正常に登録されること() throws Exception {
-    Student student = new Student(
-        id,
-        "氏名",
-        "フリガナ",
-        "ニックネーム",
-        "test@example.com",
-        "地域",
-        99,
-        "性別",
-        "備考",
-        false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    StudentDetail studentDetail = createValidStudentDetail();
 
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
             .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +98,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 新規受講生の登録でバリデーションエラーが発生した場合400エラーが返されること() throws Exception {
+  void 新規受講生の登録でバリデーションエラーが発生した場合400エラーが返されること()
+      throws Exception {
     Student student = new Student(
         id,
         null, // 氏名　NotBlank
@@ -122,8 +111,8 @@ class StudentControllerTest {
         null, // 性別
         null, // 備考
         false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+    List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseDetailList);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
             .contentType(MediaType.APPLICATION_JSON)
@@ -134,20 +123,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の更新で正常に更新されること() throws Exception{
-    Student student = new Student(
-        id,
-        "氏名",
-        "フリガナ",
-        "ニックネーム",
-        "test@example.com",
-        "地域",
-        99,
-        "性別",
-        "備考",
-        false);
-    List<StudentCourse> studentCourse = new ArrayList<>();
-    StudentDetail studentDetail = new StudentDetail(student, studentCourse);
+  void 受講生詳細の更新で正常に更新されること() throws Exception {
+    StudentDetail studentDetail = createValidStudentDetail();
 
     when(service.searchStudent(id)).thenReturn(studentDetail);
 
@@ -161,18 +138,7 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の更新で存在しないIDの場合404エラーが返されること() throws Exception {
-    Student student = new Student(
-        id,
-        "氏名",
-        "フリガナ",
-        "ニックネーム",
-        "test@example.com",
-        "地域",
-        99,
-        "性別",
-        "備考",
-        false);
-    StudentDetail studentDetail = new StudentDetail(student, null);
+    StudentDetail studentDetail = createValidStudentDetail();
 
     when(service.searchStudent(id)).thenReturn(null);
 
@@ -240,6 +206,7 @@ class StudentControllerTest {
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
     assertThat(violations.size()).isEqualTo(1);
-    assertThat(violations).extracting("message").containsOnly("電子メールアドレスとして正しい形式にしてください");
+    assertThat(violations).extracting("message")
+        .containsOnly("電子メールアドレスとして正しい形式にしてください");
   }
 }

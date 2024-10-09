@@ -52,7 +52,7 @@ public class StudentConverter {
    * @param courseApplicationStatusList 申し込み状況リスト
    * @return コースIDをキー、申し込み状況を値とするマップ
    */
-  private static Map<Integer, CourseApplicationStatus> mapCourseApplicationStatuses(
+  private Map<Integer, CourseApplicationStatus> mapCourseApplicationStatuses(
       List<CourseApplicationStatus> courseApplicationStatusList) {
     Map<Integer, CourseApplicationStatus> statusMap = new HashMap<>();
     for (CourseApplicationStatus status : courseApplicationStatusList) {
@@ -70,7 +70,7 @@ public class StudentConverter {
    * @param statusMap コースIDをキー、申し込み状況を値とするマップ
    * @param studentDetailList 受講生詳細リスト
    */
-  private static void createStudentDetail(Student student, List<StudentCourse> studentCourseList,
+  private void createStudentDetail(Student student, List<StudentCourse> studentCourseList,
       Map<Integer, CourseApplicationStatus> statusMap, List<StudentDetail> studentDetailList) {
     // 受講生詳細オブジェクトを作成し、受講生情報を設定
     StudentDetail studentDetail = new StudentDetail();

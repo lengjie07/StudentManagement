@@ -72,7 +72,8 @@ public class StudentService {
   }
 
   public List<StudentDetail> searchStudentDetail(StudentSearchCriteria criteria) {
-    return repository.searchStudentDetail(criteria);
+    List<StudentDetail> studentDetailList = repository.searchStudentDetail(criteria);
+    return converter.convertSearchedStudentDetailList(studentDetailList);
   }
 
   /**

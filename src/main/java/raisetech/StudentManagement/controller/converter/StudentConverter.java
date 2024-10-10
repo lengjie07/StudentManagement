@@ -45,6 +45,21 @@ public class StudentConverter {
     return studentDetailList;
   }
 
+  public List<StudentDetail> convertSearchedStudentDetailList(List<StudentDetail> studentDetailList) {
+    Map<Integer, StudentDetail> studentDetailMap = new HashMap<>();
+
+    studentDetailList.forEach(studentDetail -> {
+      int studentId = studentDetail.getStudent().getId();
+      if (studentDetailMap.containsKey(studentId)) {
+        studentDetailMap.get(studentId).getStudentCourseDetailList()
+            .addAll(studentDetail.getStudentCourseDetailList());
+      } else {
+        studentDetailMap.put(studentId, studentDetail);
+      }
+    });
+    return new ArrayList<>(studentDetailMap.values());
+  }
+
   /**
    * 申し込み状況リストをコースIDをキーとするマップに変換
    * コースIDによる申し込み状況の検索を高速化するため

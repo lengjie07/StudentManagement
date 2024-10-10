@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.domain.StudentSearchCriteria;
+import raisetech.studentmanagement.exception.StudentDetailNotFoundException;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -74,6 +75,8 @@ public class StudentController {
   @PostMapping("/search")
   public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
+    if (studentDetailList.isEmpty())
+      throw new StudentDetailNotFoundException("該当する受講生が見つかりませんでした。");
     return ResponseEntity.ok(studentDetailList);
   }
 

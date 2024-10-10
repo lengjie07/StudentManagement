@@ -72,6 +72,13 @@ public class StudentController {
     return studentDetail;
   }
 
+  /**
+   * 条件を指定した受講生詳細の検索
+   * 検索条件はJson形式で渡す
+   *
+   * @param criteria 検索条件
+   * @return 受講生詳細リスト
+   */
   @PostMapping("/search")
   public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);

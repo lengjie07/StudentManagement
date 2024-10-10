@@ -59,6 +59,13 @@ public interface StudentRepository {
    */
   CourseApplicationStatus findCourseApplicationStatusByCourseId(int courseId);
 
+  /**
+   * 条件を指定した受講生詳細の検索
+   * 検索条件が指定されていないときは全件を返す
+   *
+   * @param criteria 検索条件
+   * @return 受講生詳細リスト
+   */
   List<StudentDetail> searchStudentDetail(StudentSearchCriteria criteria);
 
   /**

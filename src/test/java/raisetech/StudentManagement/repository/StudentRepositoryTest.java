@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -98,6 +100,30 @@ class StudentRepositoryTest {
     CourseApplicationStatus actual = sut.findCourseApplicationStatusByCourseId(id);
 
     assertThat(actual.getStatus()).isEqualTo("本申込");
+  }
+
+  @Test
+  void 条件を指定した検索で何も指定しなかったとき全件を取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人", "結城明日奈", "綾野珪子", "篠崎里香",
+            "壺井遼太郎");
+  }
+
+  @Test
+  void 条件を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setGender("女性");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(3);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "綾野珪子", "篠崎里香");
   }
 
   @Test

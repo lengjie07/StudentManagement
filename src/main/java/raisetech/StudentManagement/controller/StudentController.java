@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -70,10 +71,10 @@ public class StudentController {
     return studentDetail;
   }
 
-  @GetMapping("/search")
-  public ResponseEntity<List<StudentDetail>> searchStudentDetail() {
-    List<StudentDetail> studentDetails = service.searchStudentDetail();
-    return ResponseEntity.ok(studentDetails);
+  @PostMapping("/search")
+  public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
+    List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
+    return ResponseEntity.ok(studentDetailList);
   }
 
   /**

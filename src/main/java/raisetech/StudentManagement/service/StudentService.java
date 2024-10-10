@@ -12,6 +12,7 @@ import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 import raisetech.studentmanagement.repository.StudentRepository;
 
 /**
@@ -70,8 +71,8 @@ public class StudentService {
     return new StudentDetail(student, studentCourseDetailList);
   }
 
-  public List<StudentDetail> searchStudentDetail() {
-    return repository.searchStudentDetail();
+  public List<StudentDetail> searchStudentDetail(StudentSearchCriteria criteria) {
+    return repository.searchStudentDetail(criteria);
   }
 
   /**

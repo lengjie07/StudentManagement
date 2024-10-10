@@ -33,7 +33,7 @@
     SELECT * FROM course_application_statuses WHERE course_id = #{courseId}
   </select>
 
-  <!-- 条件を指定して受講生詳細を検索　-->
+  <!-- 条件を指定して受講生詳細を検索 -->
   <select id="searchStudentDetail" resultMap="StudentDetailResultMap">
     SELECT
     s.id AS student_id,
@@ -61,7 +61,43 @@
     LEFT JOIN
     course_application_statuses cas ON sc.id = cas.course_id
     WHERE
-    s.is_deleted IS false;
+    s.is_deleted IS false
+    <if test="fullName != null and fullName != ''">
+      AND s.full_name LIKE CONCAT('%', #{fullName}, '%')
+    </if>
+    <if test="furigana != null and furigana != ''">
+      AND s.furigana LIKE CONCAT('%', #{furigana}, '%')
+    </if>
+    <if test="nickname != null and nickname != ''">
+      AND s.nickname LIKE CONCAT('%', #{nickname}, '%')
+    </if>
+    <if test="emailAddress != null and emailAddress != ''">
+      AND s.email_address LIKE CONCAT('%', #{emailAddress}, '%')
+    </if>
+    <if test="area != null and area != ''">
+      AND s.area LIKE CONCAT('%', #{area}, '%')
+    </if>
+    <if test="age != null">
+      AND s.age = #{age}
+    </if>
+    <if test="gender != null and gender != ''">
+      AND s.gender = #{gender}
+    </if>
+    <if test="remark != null and remark != ''">
+      AND s.remark LIKE CONCAT('%', #{remark}, '%')
+    </if>
+    <if test="courseName != null and courseName != ''">
+      AND sc.course_name LIKE CONCAT('%', #{courseName}, '%')
+    </if>
+    <if test="startDate != null and startDate != ''">
+      AND sc.start_date >= #{startDate}
+    </if>
+    <if test="endDate != null and endDate != ''">
+      AND sc.end_date &lt;= #{endDate}
+    </if>
+    <if test="status != null and status != ''">
+      AND cas.status LIKE CONCAT('%', #{status}, '%')
+    </if>
   </select>
 
   <!-- 新規受講生情報の登録 -->

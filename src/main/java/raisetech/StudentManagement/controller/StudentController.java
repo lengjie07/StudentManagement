@@ -79,6 +79,11 @@ public class StudentController {
    * @param criteria 検索条件
    * @return 受講生詳細リスト
    */
+  @Operation(summary = "受講生詳細絞り込み検索", description = "指定した条件で受講生詳細を検索します。")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "成功"),
+      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
+  })
   @PostMapping("/search")
   public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);

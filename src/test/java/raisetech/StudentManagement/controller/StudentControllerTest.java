@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 import raisetech.studentmanagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -83,6 +84,37 @@ class StudentControllerTest {
         .andExpect(status().isNotFound());
 
     verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 条件に合致する受講生詳細が正常に返されること() throws Exception {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    List<StudentDetail> studentDetailList = new ArrayList<>();
+    studentDetailList.add(createValidStudentDetail());
+
+    when(service.searchStudentDetail(any())).thenReturn(studentDetailList);
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/search")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(criteria)))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchStudentDetail(any());
+  }
+
+  @Test
+  void 検索条件に合致する受講生が見つからない場合に404エラーが返されること() throws Exception {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    when(service.searchStudentDetail(any())).thenReturn(new ArrayList<>());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(criteria)))
+        .andExpect(status().isNotFound());
+
+    verify(service, times(1)).searchStudentDetail(any());
   }
 
   @Test

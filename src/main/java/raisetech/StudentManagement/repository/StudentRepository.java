@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentDetail;
 
 /**
  * 受講生テーブルとコース情報テーブルと紐づくリポジトリ
@@ -105,4 +106,6 @@ public interface StudentRepository {
    * @param courseApplicationStatus 申し込み状況
    */
   void updateCourseApplicationStatus(CourseApplicationStatus courseApplicationStatus);
+
+  List<StudentDetail> searchStudentDetail();
 }

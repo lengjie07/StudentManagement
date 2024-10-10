@@ -70,6 +70,10 @@ public class StudentService {
     return new StudentDetail(student, studentCourseDetailList);
   }
 
+  public List<StudentDetail> searchStudentDetail() {
+    return repository.searchStudentDetail();
+  }
+
   /**
    * 新規受講生の登録
    * コース情報と申し込み状況も一緒に登録する

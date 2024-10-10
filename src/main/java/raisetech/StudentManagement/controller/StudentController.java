@@ -70,6 +70,12 @@ public class StudentController {
     return studentDetail;
   }
 
+  @GetMapping("/search")
+  public ResponseEntity<List<StudentDetail>> searchStudentDetail() {
+    List<StudentDetail> studentDetails = service.searchStudentDetail();
+    return ResponseEntity.ok(studentDetails);
+  }
+
   /**
    * 新規受講生の登録
    * コース情報と申し込み状況も一緒に登録する

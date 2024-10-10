@@ -16,6 +16,7 @@ public class GlobalExceptionHandler {
 
   /**
    * ControllerのgetStudentメソッドで存在しないIDがリクエストされた際の例外をハンドリングする
+   *
    * @param ex StudentNotFoundException
    * @return "error": "受講生ID: idが見つかりません。"
    */
@@ -26,6 +27,12 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
   }
 
+  /**
+   * ControllerのsearchStudentDetailメソッドで検索条件に一致する受講生が見つからなかった際の例外をハンドリングする
+   *
+   * @param ex StudentDetailNotFoundException
+   * @return "error": "該当する受講生が見つかりませんでした。"
+   */
   @ExceptionHandler(StudentDetailNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleStudentDetailNotFoundException(StudentDetailNotFoundException ex) {
     Map<String, String> errorResponse = new HashMap<>();
@@ -35,6 +42,7 @@ public class GlobalExceptionHandler {
 
   /**
    * Post,Put処理の入力チェックでBAD_REQUESTが発生した際の例外をハンドリングする
+   *
    * @param ex handleMethodArgumentNotValidException
    * @return カラム名とデフォルトのエラーメッセージ
    */

@@ -45,6 +45,12 @@ public class StudentConverter {
     return studentDetailList;
   }
 
+  /**
+   *　重複して取得された受講生情報を一つの受講生詳細にまとめる
+   *
+   * @param studentDetailList 受講生詳細リスト(生データ)
+   * @return 重複をまとめた受講生詳細リスト
+   */
   public List<StudentDetail> convertSearchedStudentDetailList(List<StudentDetail> studentDetailList) {
     Map<Integer, StudentDetail> studentDetailMap = new HashMap<>();
 

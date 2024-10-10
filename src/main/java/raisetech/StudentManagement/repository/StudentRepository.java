@@ -62,6 +62,8 @@ public interface StudentRepository {
   /**
    * 条件を指定した受講生詳細の検索
    * 検索条件が指定されていないときは全件を返す
+   * 生データなので、複数コースが登録されている場合、受講生情報が重複して取得される
+   * 重複したデータをまとめる処理はService(Converter)で行う
    *
    * @param criteria 検索条件
    * @return 受講生詳細リスト

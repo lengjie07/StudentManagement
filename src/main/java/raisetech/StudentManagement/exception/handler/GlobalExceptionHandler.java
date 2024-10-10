@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import raisetech.studentmanagement.exception.StudentDetailNotFoundException;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 
 @ControllerAdvice
@@ -20,6 +21,13 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(StudentNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleStudentNotFoundException(StudentNotFoundException ex) {
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("error", ex.getMessage());
+    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(StudentDetailNotFoundException.class)
+  public ResponseEntity<Map<String, String>> handleStudentDetailNotFoundException(StudentDetailNotFoundException ex) {
     Map<String, String> errorResponse = new HashMap<>();
     errorResponse.put("error", ex.getMessage());
     return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);

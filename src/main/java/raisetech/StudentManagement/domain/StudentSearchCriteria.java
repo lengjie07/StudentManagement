@@ -1,6 +1,6 @@
 package raisetech.studentmanagement.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +16,7 @@ public class StudentSearchCriteria {
   private String gender;
   private String remark;
   private String courseName;
-  private LocalDate startDate;
-  private LocalDate endDate;
+  private LocalDateTime startDate;
+  private LocalDateTime endDate;
   private String status;
 }

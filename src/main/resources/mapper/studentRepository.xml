@@ -89,11 +89,11 @@
     <if test="courseName != null and courseName != ''">
       AND sc.course_name LIKE CONCAT('%', #{courseName}, '%')
     </if>
-    <if test="startDate != null and startDate != ''">
-      AND sc.start_date >= #{startDate}
+    <if test="startDate != null">
+      AND start_date &gt;= #{startDate, jdbcType=TIMESTAMP}
     </if>
-    <if test="endDate != null and endDate != ''">
-      AND sc.end_date &lt;= #{endDate}
+    <if test="endDate != null">
+      AND end_date &lt;= #{endDate, jdbcType=TIMESTAMP}
     </if>
     <if test="status != null and status != ''">
       AND cas.status LIKE CONCAT('%', #{status}, '%')

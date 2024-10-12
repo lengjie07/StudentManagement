@@ -84,7 +84,7 @@ public class StudentController {
       @ApiResponse(responseCode = "200", description = "成功"),
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
-  @PostMapping("/search")
+  @GetMapping("/search")
   public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
     if (studentDetailList.isEmpty())

@@ -33,6 +33,73 @@
     SELECT * FROM course_application_statuses WHERE course_id = #{courseId}
   </select>
 
+  <!-- 条件を指定して受講生詳細を検索 -->
+  <select id="searchStudentDetail" resultMap="StudentDetailResultMap">
+    SELECT
+      s.id AS student_id,
+      s.full_name,
+      s.furigana,
+      s.nickname,
+      s.email_address,
+      s.area,
+      s.age,
+      s.gender,
+      s.remark,
+      s.is_deleted,
+      sc.id AS student_course_id,
+      sc.student_id,
+      sc.course_name,
+      sc.start_date,
+      sc.end_date,
+      cas.id AS course_application_status_id,
+      cas.course_id,
+      cas.status
+    FROM
+      students s
+    INNER JOIN
+      students_courses sc ON s.id = sc.student_id
+    INNER JOIN
+      course_application_statuses cas ON sc.id = cas.course_id
+    WHERE
+      s.is_deleted IS false
+      <if test="fullName != null and fullName != ''">
+        AND s.full_name LIKE CONCAT('%', #{fullName}, '%')
+      </if>
+      <if test="furigana != null and furigana != ''">
+        AND s.furigana LIKE CONCAT('%', #{furigana}, '%')
+      </if>
+      <if test="nickname != null and nickname != ''">
+        AND s.nickname LIKE CONCAT('%', #{nickname}, '%')
+      </if>
+      <if test="emailAddress != null and emailAddress != ''">
+        AND s.email_address LIKE CONCAT('%', #{emailAddress}, '%')
+      </if>
+      <if test="area != null and area != ''">
+        AND s.area LIKE CONCAT('%', #{area}, '%')
+      </if>
+      <if test="age != null">
+        AND s.age = #{age}
+      </if>
+      <if test="gender != null and gender != ''">
+        AND s.gender = #{gender}
+      </if>
+      <if test="remark != null and remark != ''">
+        AND s.remark LIKE CONCAT('%', #{remark}, '%')
+      </if>
+      <if test="courseName != null and courseName != ''">
+        AND sc.course_name LIKE CONCAT('%', #{courseName}, '%')
+      </if>
+      <if test="startDate != null">
+        AND start_date &gt;= #{startDate, jdbcType=TIMESTAMP}
+      </if>
+      <if test="endDate != null">
+        AND end_date &lt;= #{endDate, jdbcType=TIMESTAMP}
+      </if>
+      <if test="status != null and status != ''">
+        AND cas.status LIKE CONCAT('%', #{status}, '%')
+      </if>
+  </select>
+
   <!-- 新規受講生情報の登録 -->
   <insert id="insertStudent" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students (full_name, furigana, nickname, email_address, area, age, gender, remark, is_deleted)
@@ -85,4 +152,40 @@
     SET status = #{status}
     WHERE course_id = #{courseId}
   </update>
+
+  <!-- StudentDetail のマッピング -->
+  <resultMap id="StudentDetailResultMap" type="raisetech.studentmanagement.domain.StudentDetail">
+    <!-- Student のマッピング -->
+    <association property="student" javaType="raisetech.studentmanagement.data.Student">
+      <id column="student_id" property="id"/>
+      <result column="full_name" property="fullName"/>
+      <result column="furigana" property="furigana"/>
+      <result column="nickname" property="nickname"/>
+      <result column="email_address" property="emailAddress"/>
+      <result column="area" property="area"/>
+      <result column="age" property="age"/>
+      <result column="gender" property="gender"/>
+      <result column="remark" property="remark"/>
+      <result column="is_deleted" property="isDeleted"/>
+    </association>
+
+    <!-- StudentCourseDetail のマッピング -->
+    <collection property="studentCourseDetailList" ofType="raisetech.studentmanagement.domain.StudentCourseDetail">
+      <!-- StudentCourse のマッピング -->
+      <association property="studentCourse" javaType="raisetech.studentmanagement.data.StudentCourse">
+        <id column="student_course_id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="course_name" property="courseName"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+      </association>
+
+      <!-- CourseApplicationStatus のマッピング -->
+      <association property="courseApplicationStatus" javaType="raisetech.studentmanagement.data.CourseApplicationStatus">
+        <id column="course_application_status_id" property="id"/>
+        <result column="course_id" property="courseId"/>
+        <result column="status" property="status"/>
+      </association>
+    </collection>
+  </resultMap>
 </mapper>

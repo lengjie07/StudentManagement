@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
+import raisetech.studentmanagement.exception.StudentDetailNotFoundException;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
 
@@ -68,6 +70,26 @@ public class StudentController {
       throw new StudentNotFoundException(id);
     }
     return studentDetail;
+  }
+
+  /**
+   * 条件を指定した受講生詳細の検索
+   * 検索条件はJson形式で渡す
+   *
+   * @param criteria 検索条件
+   * @return 受講生詳細リスト
+   */
+  @Operation(summary = "受講生詳細絞り込み検索", description = "指定した条件で受講生詳細を検索します。")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "成功"),
+      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
+  })
+  @GetMapping("/search")
+  public ResponseEntity<List<StudentDetail>> searchStudentDetail(StudentSearchCriteria criteria) {
+    List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
+    if (studentDetailList.isEmpty())
+      throw new StudentDetailNotFoundException("該当する受講生が見つかりませんでした。");
+    return ResponseEntity.ok(studentDetailList);
   }
 
   /**

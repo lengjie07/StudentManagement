@@ -12,6 +12,7 @@ import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 import raisetech.studentmanagement.repository.StudentRepository;
 
 /**
@@ -68,6 +69,19 @@ public class StudentService {
       studentCourseDetailList.add(studentCourseDetail);
     }
     return new StudentDetail(student, studentCourseDetailList);
+  }
+
+  /**
+   * 条件を指定した受講生詳細の検索
+   * リポジトリから取得した生データを
+   * コンバータで重複をまとめた受講生詳細リストに変換する
+   *
+   * @param criteria リスト
+   * @return 重複をまとめた受講生詳細リスト
+   */
+  public List<StudentDetail> searchStudentDetail(StudentSearchCriteria criteria) {
+    List<StudentDetail> studentDetailList = repository.searchStudentDetail(criteria);
+    return converter.convertSearchedStudentDetailList(studentDetailList);
   }
 
   /**

@@ -85,7 +85,7 @@ public class StudentController {
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
   @GetMapping("/search")
-  public ResponseEntity<List<StudentDetail>> searchStudentDetail(@RequestBody StudentSearchCriteria criteria) {
+  public ResponseEntity<List<StudentDetail>> searchStudentDetail(StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
     if (studentDetailList.isEmpty())
       throw new StudentDetailNotFoundException("該当する受講生が見つかりませんでした。");

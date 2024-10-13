@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 
 /**
  * 受講生テーブルとコース情報テーブルと紐づくリポジトリ
@@ -56,6 +58,17 @@ public interface StudentRepository {
    * @return コースIDで指定したコースの申し込み状況
    */
   CourseApplicationStatus findCourseApplicationStatusByCourseId(int courseId);
+
+  /**
+   * 条件を指定した受講生詳細の検索
+   * 検索条件が指定されていないときは全件を返す
+   * 生データなので、複数コースが登録されている場合、受講生情報が重複して取得される
+   * 重複したデータをまとめる処理はService(Converter)で行う
+   *
+   * @param criteria 検索条件
+   * @return 受講生詳細リスト
+   */
+  List<StudentDetail> searchStudentDetail(StudentSearchCriteria criteria);
 
   /**
    * 新規受講生情報の登録

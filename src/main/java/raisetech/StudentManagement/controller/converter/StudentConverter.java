@@ -46,6 +46,27 @@ public class StudentConverter {
   }
 
   /**
+   *　重複して取得された受講生情報を一つの受講生詳細にまとめる
+   *
+   * @param studentDetailList 受講生詳細リスト(生データ)
+   * @return 重複をまとめた受講生詳細リスト
+   */
+  public List<StudentDetail> convertSearchedStudentDetailList(List<StudentDetail> studentDetailList) {
+    Map<Integer, StudentDetail> studentDetailMap = new HashMap<>();
+
+    studentDetailList.forEach(studentDetail -> {
+      int studentId = studentDetail.getStudent().getId();
+      if (studentDetailMap.containsKey(studentId)) {
+        studentDetailMap.get(studentId).getStudentCourseDetailList()
+            .addAll(studentDetail.getStudentCourseDetailList());
+      } else {
+        studentDetailMap.put(studentId, studentDetail);
+      }
+    });
+    return new ArrayList<>(studentDetailMap.values());
+  }
+
+  /**
    * 申し込み状況リストをコースIDをキーとするマップに変換
    * コースIDによる申し込み状況の検索を高速化するため
    *

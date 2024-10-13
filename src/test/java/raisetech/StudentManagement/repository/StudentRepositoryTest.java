@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentmanagement.data.CourseApplicationStatus;
 import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
+import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -19,11 +21,11 @@ class StudentRepositoryTest {
 
   /*
     初期のstudentsテーブル
-    ('桐ヶ谷和人', 'キリガヤカズト', 'キリト', 'kirito@sao.com', '埼玉', 17, '男性'),
-    ('結城明日奈', 'ユウキアスナ', 'アスナ', 'asuna@sao.com', '東京', 18, '女性'),
-    ('綾野珪子', 'アヤノケイコ', 'シリカ', 'silica@sao.com', '神奈川', 15, '女性'),
-    ('篠崎里香', 'シノザキリカ', 'リズベット', 'lisbeth@sao.com', '東京', 18, '女性'),
-    ('壺井遼太郎', 'ツボイリョウタロウ', 'クライン', 'klein@sao.com', '千葉', 27, '男性');
+    ('桐ヶ谷和人', 'キリガヤカズト', 'キリト', 'kirito@sao.com', '埼玉', 17, '男性', 'テスト'),
+    ('結城明日奈', 'ユウキアスナ', 'アスナ', 'asuna@sao.com', '東京', 18, '女性', 'test'),
+    ('綾野珪子', 'アヤノケイコ', 'シリカ', 'silica@sao.com', '神奈川', 15, '女性', 'てすと'),
+    ('篠崎里香', 'シノザキリカ', 'リズベット', 'lisbeth@sao.com', '東京', 18, '女性', 'テスト'),
+    ('壺井遼太郎', 'ツボイリョウタロウ', 'クライン', 'klein@sao.com', '千葉', 27, '男性', 'test')
    */
 
   /*
@@ -98,6 +100,162 @@ class StudentRepositoryTest {
     CourseApplicationStatus actual = sut.findCourseApplicationStatusByCourseId(id);
 
     assertThat(actual.getStatus()).isEqualTo("本申込");
+  }
+
+  @Test
+  void 条件を指定した検索で何も指定しなかったとき全件を取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人", "結城明日奈", "綾野珪子", "篠崎里香",
+            "壺井遼太郎");
+  }
+
+  @Test
+  void 名前を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setFullName("桐ヶ谷");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人");
+  }
+
+  @Test
+  void フリガナを指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setFurigana("キリガヤ");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人");
+  }
+
+  @Test
+  void ニックネームを指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setNickname("キリト");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人");
+  }
+
+  @Test
+  void メールアドレスを指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setEmailAddress("kirito");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人");
+  }
+
+  @Test
+  void 地域を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setArea("東京");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "篠崎里香");
+  }
+
+  @Test
+  void 年齢を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setAge(18);
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "篠崎里香");
+  }
+
+  @Test
+  void 性別を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setGender("女性");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(3);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "綾野珪子", "篠崎里香");
+  }
+
+  @Test
+  void 備考を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setRemark("test");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "壺井遼太郎");
+  }
+
+  @Test
+  void コース名を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setCourseName("java");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "綾野珪子");
+  }
+
+  @Test
+  void 開始日を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setStartDate(LocalDateTime.parse("2024-10-07T00:00:00")); // 設定した日付以降のデータが取得される
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(3);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "桐ヶ谷和人", "壺井遼太郎");
+  }
+
+  @Test
+  void 修了日を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setEndDate(LocalDateTime.parse("2025-10-07T00:00:00")); // 設定した日付以前のデータが取得される
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(4);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("桐ヶ谷和人", "結城明日奈", "綾野珪子", "篠崎里香");
+  }
+
+  @Test
+  void 申し込み状況を指定して検索したときに正しいデータが取得できること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    criteria.setStatus("受講中");
+
+    List<StudentDetail> actual = sut.searchStudentDetail(criteria);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual).extracting("student.fullName")
+        .containsExactlyInAnyOrder("結城明日奈", "綾野珪子");
   }
 
   @Test

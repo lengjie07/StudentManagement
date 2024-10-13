@@ -49,8 +49,8 @@ class StudentControllerTest {
    * コース詳細情報は空
    */
   private StudentDetail createValidStudentDetail() {
-    Student student = new Student(id, "氏名", "フリガナ", "ニックネーム", "test@example.com",
-        "地域", 99, "性別", "備考", false);
+    Student student = new Student(id, "三宅崚介", "ミヤケリョウスケ", "Leng", "miyake@example.com",
+        "神奈川", 26, "男性", "備考", false);
     List<StudentCourseDetail> studentCourseDetailList = new ArrayList<>();
     return new StudentDetail(student, studentCourseDetailList);
   }
@@ -83,6 +83,33 @@ class StudentControllerTest {
         .andExpect(status().isNotFound());
 
     verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 条件に合致する受講生詳細が正常に返されること() throws Exception {
+    List<StudentDetail> studentDetailList = new ArrayList<>();
+    studentDetailList.add(createValidStudentDetail());
+
+    when(service.searchStudentDetail(any())).thenReturn(studentDetailList);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/search")
+            .param("fullName", "三宅崚介")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchStudentDetail(any());
+  }
+
+  @Test
+  void 検索条件に合致する受講生が見つからない場合に404エラーが返されること() throws Exception {
+    when(service.searchStudentDetail(any())).thenReturn(new ArrayList<>());
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/search")
+            .param("fullName", "名無し")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+
+    verify(service, times(1)).searchStudentDetail(any());
   }
 
   @Test

@@ -21,6 +21,7 @@ import raisetech.studentmanagement.data.Student;
 import raisetech.studentmanagement.data.StudentCourse;
 import raisetech.studentmanagement.domain.StudentCourseDetail;
 import raisetech.studentmanagement.domain.StudentDetail;
+import raisetech.studentmanagement.domain.StudentSearchCriteria;
 import raisetech.studentmanagement.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,6 +91,19 @@ class StudentServiceTest {
         actual.getStudentCourseDetailList().getFirst().getCourseApplicationStatus().getId())
         .isEqualTo(
             expected.getStudentCourseDetailList().getFirst().getCourseApplicationStatus().getId());
+  }
+
+  @Test
+  void 条件を指定した受講生詳細の検索でリポジトリとコンバータの処理が適切に呼び出せていること() {
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+    List<StudentDetail> studentDetailList = new ArrayList<>();
+
+    when(repository.searchStudentDetail(criteria)).thenReturn(studentDetailList);
+
+   sut.searchStudentDetail(criteria);
+
+    verify(repository, times(1)).searchStudentDetail(criteria);
+    verify(converter, times(1)).convertSearchedStudentDetailList(studentDetailList);
   }
 
   @Test

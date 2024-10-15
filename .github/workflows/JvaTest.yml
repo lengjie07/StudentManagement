@@ -57,7 +57,7 @@ jobs:
         username: ${{ env.EC2_USER }}
         key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
         envs: DEST_PATH
-        scripts: |
+        script: |
           sudo yum update -y
           if [ -f /etc/systemd/system/StudentManagement.service ]; then
             echo "already exists Service File"

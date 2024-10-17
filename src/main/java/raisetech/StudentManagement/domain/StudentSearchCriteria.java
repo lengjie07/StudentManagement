@@ -15,6 +15,7 @@ public class StudentSearchCriteria {
   private Integer age;
   private String gender;
   private String remark;
+  private Boolean isDeleted;
   private String courseName;
   private LocalDateTime startDate;
   private LocalDateTime endDate;

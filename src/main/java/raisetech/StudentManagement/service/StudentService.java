@@ -31,21 +31,6 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の全件検索
-   * 取得した受講生情報リストとコース情報リストを
-   * Converterで組み合わせて受講生詳細リストを返す
-   *
-   * @return 受講生詳細リスト
-   */
-  public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.searchStudent();
-    List<StudentCourse> studentCourseList = repository.searchStudentCourse();
-    List<CourseApplicationStatus> courseApplicationStatusList = repository.searchCourseApplicationStatus();
-    return converter.convertStudentDetailList(studentList, studentCourseList,
-        courseApplicationStatusList);
-  }
-
-  /**
    * IDで指定した受講生詳細の検索
    *
    * @param id 受講生ID

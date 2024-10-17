@@ -38,21 +38,6 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の全件検索
-   *
-   * @return 受講生詳細リスト
-   */
-  @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "成功"),
-      @ApiResponse(responseCode = "500", description = "内部サーバーエラー")
-  })
-  @GetMapping("/students")
-  public List<StudentDetail> getStudentList() {
-    return service.searchStudentList();
-  }
-
-  /**
    * IDで指定した受講生詳細の検索
    *
    * @param id 受講生ID
@@ -74,7 +59,8 @@ public class StudentController {
 
   /**
    * 条件を指定した受講生詳細の検索
-   * 検索条件はJson形式で渡す
+   * 条件を指定しなかった場合は全件を返す
+   * 検索条件はURLパラメータで渡す
    *
    * @param criteria 検索条件
    * @return 受講生詳細リスト
@@ -84,7 +70,7 @@ public class StudentController {
       @ApiResponse(responseCode = "200", description = "成功"),
       @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
   })
-  @GetMapping("/search")
+  @GetMapping("/students")
   public ResponseEntity<List<StudentDetail>> searchStudentDetail(StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
     if (studentDetailList.isEmpty())

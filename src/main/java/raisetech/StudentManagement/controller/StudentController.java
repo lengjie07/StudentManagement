@@ -1,6 +1,7 @@
 package raisetech.studentmanagement.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,11 +50,35 @@ public class StudentController {
    */
   @Operation(summary = "受講生詳細検索", description = "指定したIDの受講生詳細を検索します。")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "成功"),
-      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
+      @ApiResponse(responseCode = "200",
+          description = "成功",
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      @ApiResponse(responseCode = "400",
+          description = "不正なリクエスト",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "404",
+          description = "受講生が見つかりません",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "500",
+          description = "サーバーエラー",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      )
   })
   @GetMapping("/students/{id}")
-  public StudentDetail getStudent(@PathVariable @NotNull int id) {
+  public StudentDetail getStudent(
+      @Parameter(description = "受講生ID (必須)", required = true)
+      @PathVariable @NotNull int id) {
     StudentDetail studentDetail = service.searchStudent(id);
     if (studentDetail == null || studentDetail.getStudent() == null) {
       throw new StudentNotFoundException(id);
@@ -69,13 +94,40 @@ public class StudentController {
    * @param criteria 検索条件
    * @return 受講生詳細リスト
    */
-  @Operation(summary = "受講生詳細絞り込み検索", description = "指定した条件で受講生詳細を検索します。")
+  @Operation(summary = "受講生詳細絞り込み検索", description = """
+  指定した条件で受講生詳細を検索します。<br>
+  条件を指定しなかった場合は全件を返します。
+  """)
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "成功"),
-      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
+      @ApiResponse(responseCode = "200",
+          description = "更新成功",
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      @ApiResponse(responseCode = "400",
+          description = "不正なリクエスト",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "404",
+          description = "受講生が見つかりません",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "500",
+          description = "サーバーエラー",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      )
   })
   @GetMapping("/students")
-  public ResponseEntity<List<StudentDetail>> searchStudentDetail(StudentSearchCriteria criteria) {
+  public ResponseEntity<List<StudentDetail>> searchStudentDetail(
+      @Parameter(description = "検索条件", required = false)
+      StudentSearchCriteria criteria) {
     List<StudentDetail> studentDetailList = service.searchStudentDetail(criteria);
     if (studentDetailList.isEmpty())
       throw new StudentDetailNotFoundException("該当する受講生が見つかりませんでした。");
@@ -158,19 +210,89 @@ public class StudentController {
    */
   @Operation(summary = "受講生更新", description = "受講生情報とコース情報を更新します。")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "更新成功"),
-      @ApiResponse(responseCode = "400", description = "不正なリクエスト"),
-      @ApiResponse(responseCode = "404", description = "受講生が見つかりません")
+      @ApiResponse(responseCode = "200",
+          description = "更新成功",
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      @ApiResponse(responseCode = "400",
+          description = "不正なリクエスト",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "404",
+          description = "受講生が見つかりません",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "500",
+          description = "サーバーエラー",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      )
   })
   @PutMapping("/students")
   public ResponseEntity<StudentDetail> updateStudent(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = """
+            受講生詳細を更新します。<br>
+            studentのidには更新したい受講生のIDを入力してください。<br>
+            studentCourseのidには更新したいコースのIDを、studentIdにはそのコースを受講している受講生のIDを入力してください。<br>
+            courseApplicationStatusのidには更新したい申し込み状況のIDを、courseIdには更新するコースのIDを入力してください。<br>
+            ※実際のアプリケーションにおいては、各IDは自動で取得する想定です。<br>
+            <br>
+            必須項目: fullName, furigana, emailAddress, age, courseName,status<br>
+            "gender"は"男性", "女性", "その他"の中から選択してください。<br>
+            "courseName"は"Java", "AWS", "デザイン", "Webマーケティング"の中から選択してください。<br>
+            "status"は"仮申込", "本申込", "受講中", "受講終了"の中から選択してください。
+            """,
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class),
+              mediaType = "application/json",
+              examples = @ExampleObject(value = "{\n" +
+                  "  \"student\": {\n" +
+                  "    \"id\": 0,\n" +
+                  "    \"fullName\": \"山田太郎\",\n" +
+                  "    \"furigana\": \"ヤマダタロウ\",\n" +
+                  "    \"nickname\": \"だーやま\",\n" +
+                  "    \"emailAddress\": \"taro@example.com\",\n" +
+                  "    \"area\": \"東京\",\n" +
+                  "    \"age\": 20,\n" +
+                  "    \"gender\": \"男性\",\n" +
+                  "    \"remark\": \"\",\n" +
+                  "    \"isDeleted\": false\n" +
+                  "  },\n" +
+                  "  \"studentCourseDetailList\": [\n" +
+                  "    {\n" +
+                  "      \"studentCourse\": {\n" +
+                  "        \"id\": 0,\n" +
+                  "        \"studentId\": 0,\n" +
+                  "        \"courseName\": \"Java\"\n" +
+                  "      }\n" +
+                  "    },\n" +
+                  "    {\n" +
+                  "      \"courseApplicationStatus\": {\n" +
+                  "        \"id\": 0,\n" +
+                  "        \"courseId\": 0,\n" +
+                  "        \"status\": \"仮申込\"\n" +
+                  "      }\n" +
+                  "    }\n" +
+                  "  ]\n" +
+                  "}")
+          )
+      )
       @RequestBody @Valid StudentDetail studentDetail) {
     if (studentDetail == null || studentDetail.getStudent() == null) {
       return ResponseEntity.badRequest().build();
     }
 
-    StudentDetail studentDetail1 = service.searchStudent(studentDetail.getStudent().getId());
-    if (studentDetail1 == null || studentDetail1.getStudent() == null) {
+    StudentDetail existingStudentDetail = service.searchStudent(studentDetail.getStudent().getId());
+    if (existingStudentDetail == null || existingStudentDetail.getStudent() == null) {
       throw new StudentNotFoundException(studentDetail.getStudent().getId());
     }
 

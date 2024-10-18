@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import raisetech.studentmanagement.exception.ErrorResponse;
 import raisetech.studentmanagement.exception.StudentDetailNotFoundException;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 
@@ -41,19 +41,18 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Post,Put処理の入力チェックでBAD_REQUESTが発生した際の例外をハンドリングする
+   * バリデーションの結果、BAD_REQUESTが発生した際の例外をハンドリングする
    *
    * @param ex handleMethodArgumentNotValidException
    * @return カラム名とデフォルトのエラーメッセージ
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
-    Map<String,String> errors = new HashMap<>();
-    ex.getBindingResult().getAllErrors().forEach((error) -> {
-      String fieldName = ((FieldError) error).getField();
-      String errorMessage = error.getDefaultMessage();
-      errors.put(fieldName, errorMessage);
-    });
-    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getFieldErrors().forEach(error ->
+        errors.put(error.getField(), error.getDefaultMessage()));
+
+    ErrorResponse errorResponse = new ErrorResponse("Validation failed", errors);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 }

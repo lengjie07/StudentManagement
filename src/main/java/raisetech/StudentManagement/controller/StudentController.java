@@ -1,6 +1,9 @@
 package raisetech.studentmanagement.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentmanagement.domain.StudentDetail;
 import raisetech.studentmanagement.domain.StudentSearchCriteria;
+import raisetech.studentmanagement.exception.ErrorResponse;
 import raisetech.studentmanagement.exception.StudentDetailNotFoundException;
 import raisetech.studentmanagement.exception.StudentNotFoundException;
 import raisetech.studentmanagement.service.StudentService;
@@ -87,11 +91,58 @@ public class StudentController {
    */
   @Operation(summary = "受講生登録", description = "受講生とコースを登録します。")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "登録成功"),
-      @ApiResponse(responseCode = "400", description = "不正なリクエスト")
+      @ApiResponse(responseCode = "200",
+          description = "登録成功",
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      @ApiResponse(responseCode = "400",
+          description = "不正なリクエスト",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      ),
+      @ApiResponse(responseCode = "500",
+          description = "サーバーエラー",
+          content = @Content(
+              schema = @Schema(implementation = ErrorResponse.class)
+          )
+      )
   })
   @PostMapping("/students")
   public ResponseEntity<StudentDetail> registerStudent(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = """
+            登録する受講生詳細。受講生情報とコース情報を含む。<br>
+            必須項目: fullName, furigana, emailAddress, age, courseName<br>
+            "gender"は"男性", "女性", "その他"の中から選択してください。<br>
+            "courseName"は"Java", "AWS", "デザイン", "Webマーケティング"の中から選択してください。
+            """,
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class),
+              mediaType = "application/json",
+              examples = @ExampleObject(value = "{\n" +
+                  "  \"student\": {\n" +
+                  "    \"fullName\": \"山田太郎\",\n" +
+                  "    \"furigana\": \"ヤマダタロウ\",\n" +
+                  "    \"nickname\": \"だーやま\",\n" +
+                  "    \"emailAddress\": \"taro@example.com\",\n" +
+                  "    \"area\": \"東京\",\n" +
+                  "    \"age\": 20,\n" +
+                  "    \"gender\": \"男性\"\n" +
+                  "  },\n" +
+                  "  \"studentCourseDetailList\": [\n" +
+                  "    {\n" +
+                  "      \"studentCourse\": {\n" +
+                  "        \"courseName\": \"Java\"\n" +
+                  "      }\n" +
+                  "    }\n" +
+                  "  ]\n" +
+                  "}")
+          )
+      )
       @RequestBody @Valid StudentDetail studentDetail) {
     service.registerStudentWithCourse(studentDetail);
     return ResponseEntity.ok(studentDetail);

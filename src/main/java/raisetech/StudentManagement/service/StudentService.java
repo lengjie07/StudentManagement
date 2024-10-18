@@ -91,10 +91,16 @@ public class StudentService {
 
       // 申し込み状況を登録
       CourseApplicationStatus courseApplicationStatus = studentCourseDetail.getCourseApplicationStatus();
-      if (courseApplicationStatus != null) {
-        courseApplicationStatus.setCourseId(studentCourse.getId());
-        repository.insertCourseApplicationStatus(courseApplicationStatus);
+      if (courseApplicationStatus == null) {
+        courseApplicationStatus = new CourseApplicationStatus();
+        studentCourseDetail.setCourseApplicationStatus(courseApplicationStatus);
       }
+      courseApplicationStatus.setCourseId(studentCourse.getId());
+      if (courseApplicationStatus.getStatus() == null) {
+        courseApplicationStatus.setStatus("仮申込");
+      }
+      repository.insertCourseApplicationStatus(courseApplicationStatus);
+
     });
     return studentDetail;
   }

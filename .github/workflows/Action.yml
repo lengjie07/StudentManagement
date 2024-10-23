@@ -29,3 +29,10 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew test
+
+    - name: Upload Test Report
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report
+        path: build/reports/tests/test

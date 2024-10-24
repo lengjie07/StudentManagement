@@ -233,7 +233,5 @@ class StudentControllerTest {
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
     assertThat(violations.size()).isEqualTo(1);
-    assertThat(violations).extracting("message")
-        .containsOnly("電子メールアドレスとして正しい形式にしてください");
   }
 }

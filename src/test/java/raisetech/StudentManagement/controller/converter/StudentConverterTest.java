@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,41 +21,6 @@ class StudentConverterTest {
   @BeforeEach
   void before() {
     sut = new StudentConverter();
-  }
-  
-  @Test
-  void 受講生リストとコース情報リストを組み合わせて受講生詳細リストに変換できること() {
-    // テスト用の受講生情報
-    Student student1 = new Student(1, "氏名", "フリガナ", "ニックネーム", "test@sample.com", "地域",
-        99, "性別", "備考", false);
-    Student student2 = new Student(2, "氏名", "フリガナ", "ニックネーム", "test@sample.com", "地域",
-        99, "性別", "備考", false);
-
-    // テスト用のコース情報
-    StudentCourse course1 = new StudentCourse(1, 1, "コース名", LocalDateTime.now(),
-        LocalDateTime.now().plusYears(1));
-    StudentCourse course2 = new StudentCourse(2, 1, "コース名", LocalDateTime.now(),
-        LocalDateTime.now().plusYears(1));
-    StudentCourse course3 = new StudentCourse(3, 2, "コース名", LocalDateTime.now(),
-        LocalDateTime.now().plusYears(1));
-
-    // テスト用の申し込み状況
-    CourseApplicationStatus status1 = new CourseApplicationStatus(1, 1, "仮申込");
-    CourseApplicationStatus status2 = new CourseApplicationStatus(2, 2, "本申込");
-    CourseApplicationStatus status3 = new CourseApplicationStatus(3, 3, "受講中");
-
-    // 各情報をリスト化
-    List<Student> studentList = Arrays.asList(student1, student2);
-    List<StudentCourse> studentCourseList = Arrays.asList(course1, course2, course3);
-    List<CourseApplicationStatus> courseApplicationStatusList = Arrays.asList(status1, status2,
-        status3);
-
-    // 各リストを受講生詳細リストに変換
-    List<StudentDetail> actual = sut.convertStudentDetailList(studentList, studentCourseList,
-        courseApplicationStatusList);
-
-    // 検証
-    assertStudentDetailList(actual, student1, course1, course2, status1, status2, student2, course3, status3);
   }
 
   @Test
@@ -107,15 +71,6 @@ class StudentConverterTest {
     // 変換処理を実行
     List<StudentDetail> actual = sut.convertSearchedStudentDetailList(studentDetailList);
 
-    // 検証
-    assertStudentDetailList(actual, student1, course1, course2, status1, status2, student2, course3,
-        status3);
-  }
-
-  // 共通の検証メソッド
-  private void assertStudentDetailList(List<StudentDetail> actual, Student student1, StudentCourse course1,
-      StudentCourse course2, CourseApplicationStatus status1, CourseApplicationStatus status2,
-      Student student2, StudentCourse course3, CourseApplicationStatus status3) {
     // 受講生詳細リストのサイズを検証
     assertThat(actual.size()).isEqualTo(2);
 

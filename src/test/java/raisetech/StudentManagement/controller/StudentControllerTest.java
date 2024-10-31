@@ -56,14 +56,6 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の全件検索を実行して空のリストが返ってくること() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get("/students"))
-        .andExpect(status().isOk());
-
-    verify(service, times(1)).searchStudentList();
-  }
-
-  @Test
   void 存在するIDで指定した受講生詳細の検索で正常に返されること() throws Exception {
     StudentDetail studentDetail = createValidStudentDetail();
 
@@ -92,7 +84,7 @@ class StudentControllerTest {
 
     when(service.searchStudentDetail(any())).thenReturn(studentDetailList);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/search")
+    mockMvc.perform(MockMvcRequestBuilders.get("/students")
             .param("fullName", "三宅崚介")
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
@@ -104,7 +96,7 @@ class StudentControllerTest {
   void 検索条件に合致する受講生が見つからない場合に404エラーが返されること() throws Exception {
     when(service.searchStudentDetail(any())).thenReturn(new ArrayList<>());
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/search")
+    mockMvc.perform(MockMvcRequestBuilders.get("/students")
             .param("fullName", "名無し")
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound());

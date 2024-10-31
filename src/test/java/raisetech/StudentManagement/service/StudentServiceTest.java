@@ -43,24 +43,6 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細の全件検索でリポジトリとコンバータの処理が適切に呼び出せていること() {
-    List<Student> studentList = new ArrayList<>();
-    List<StudentCourse> studentCourseList = new ArrayList<>();
-    List<CourseApplicationStatus> courseApplicationStatusList = new ArrayList<>();
-    when(repository.searchStudent()).thenReturn(studentList);
-    when(repository.searchStudentCourse()).thenReturn(studentCourseList);
-    when(repository.searchCourseApplicationStatus()).thenReturn(courseApplicationStatusList);
-
-    sut.searchStudentList();
-
-    verify(repository, times(1)).searchStudent();
-    verify(repository, times(1)).searchStudentCourse();
-    verify(repository, times(1)).searchCourseApplicationStatus();
-    verify(converter, times(1)).convertStudentDetailList(studentList, studentCourseList,
-        courseApplicationStatusList);
-  }
-
-  @Test
   void IDで指定した受講生詳細の検索でリポジトリの処理が適切に呼び出せていること() {
     Student student = createStudent();
     List<StudentCourse> studentCourseList = createStudentCourseList();

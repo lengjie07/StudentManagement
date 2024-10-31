@@ -61,7 +61,7 @@
     INNER JOIN
       course_application_statuses cas ON sc.id = cas.course_id
     WHERE
-      s.is_deleted IS false
+      1=1
       <if test="fullName != null and fullName != ''">
         AND s.full_name LIKE CONCAT('%', #{fullName}, '%')
       </if>
@@ -86,14 +86,17 @@
       <if test="remark != null and remark != ''">
         AND s.remark LIKE CONCAT('%', #{remark}, '%')
       </if>
+    <if test="isDeleted != null">
+      AND s.is_deleted = #{isDeleted}
+    </if>
       <if test="courseName != null and courseName != ''">
         AND sc.course_name LIKE CONCAT('%', #{courseName}, '%')
       </if>
       <if test="startDate != null">
-        AND start_date &gt;= #{startDate, jdbcType=TIMESTAMP}
+        AND sc.start_date &gt;= #{startDate, jdbcType=TIMESTAMP}
       </if>
       <if test="endDate != null">
-        AND end_date &lt;= #{endDate, jdbcType=TIMESTAMP}
+        AND sc.end_date &lt;= #{endDate, jdbcType=TIMESTAMP}
       </if>
       <if test="status != null and status != ''">
         AND cas.status LIKE CONCAT('%', #{status}, '%')
